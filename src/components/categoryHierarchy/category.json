@@ -1,0 +1,564 @@
+﻿[
+    {
+        "enabled": true,
+        "display": true,
+        "productCount": 40,
+        "isLast": false,
+        "categoryList": [
+            {
+                "enabled": true,
+                "display": true,
+                "productCount": 37,
+                "isLast": false,
+                "categoryList": [
+                    {
+                        "enabled": true,
+                        "display": false,
+                        "productCount": 19,
+                        "isLast": false,
+                        "categoryList": [
+                            {
+                                "enabled": true,
+                                "display": false,
+                                "productCount": 24,
+                                "isLast": true,
+                                "categoryList": [],
+                                "id": 4,
+                                "name": "Value and Gift Sets",
+                                "urlKey": "value-and-gift-sets"
+                            }
+                        ],
+                        "id": 3,
+                        "name": "Collection",
+                        "urlKey": "Collection"
+                    },
+                    {
+                        "enabled": true,
+                        "display": true,
+                        "productCount": 4,
+                        "isLast": true,
+                        "categoryList": [],
+                        "id": 16,
+                        "name": "Acne",
+                        "urlKey": "acne"
+                    },
+                    {
+                        "enabled": true,
+                        "display": true,
+                        "productCount": 0,
+                        "isLast": true,
+                        "categoryList": [],
+                        "id": 17,
+                        "name": "Wrinkles",
+                        "urlKey": "wrinkles"
+                    },
+                    {
+                        "enabled": true,
+                        "display": true,
+                        "productCount": 0,
+                        "isLast": true,
+                        "categoryList": [],
+                        "id": 18,
+                        "name": "Dry Skin",
+                        "urlKey": "dry-skin"
+                    },
+                    {
+                        "enabled": true,
+                        "display": true,
+                        "productCount": 0,
+                        "isLast": true,
+                        "categoryList": [],
+                        "id": 20,
+                        "name": "Dark Skin",
+                        "urlKey": "dark-skin"
+                    },
+                    {
+                        "enabled": true,
+                        "display": true,
+                        "productCount": 0,
+                        "isLast": true,
+                        "categoryList": [],
+                        "id": 21,
+                        "name": "Shape Problem",
+                        "urlKey": "shape-problem"
+                    },
+                    {
+                        "enabled": true,
+                        "display": true,
+                        "productCount": 0,
+                        "isLast": true,
+                        "categoryList": [],
+                        "id": 22,
+                        "name": "Dark spots",
+                        "urlKey": "dark-spots"
+                    },
+                    {
+                        "enabled": true,
+                        "display": true,
+                        "productCount": 0,
+                        "isLast": true,
+                        "categoryList": [],
+                        "id": 23,
+                        "name": "Freckles",
+                        "urlKey": "freckles"
+                    },
+                    {
+                        "enabled": true,
+                        "display": true,
+                        "productCount": 2,
+                        "isLast": true,
+                        "categoryList": [],
+                        "id": 27,
+                        "name": "in-test",
+                        "urlKey": "in-test"
+                    },
+                    {
+                        "enabled": false,
+                        "display": false,
+                        "productCount": 0,
+                        "isLast": true,
+                        "categoryList": [],
+                        "id": 51,
+                        "name": "Music",
+                        "urlKey": "testcat"
+                    },
+                    {
+                        "enabled": false,
+                        "display": false,
+                        "productCount": 0,
+                        "isLast": true,
+                        "categoryList": [],
+                        "id": 54,
+                        "name": "pap test",
+                        "urlKey": "pap-test"
+                    }
+                ],
+                "id": 2,
+                "name": "By Concern",
+                "urlKey": "By-Concern"
+            },
+            {
+                "enabled": true,
+                "display": true,
+                "productCount": 5,
+                "isLast": true,
+                "categoryList": [],
+                "id": 5,
+                "name": "Acne Care",
+                "urlKey": "acne-care"
+            },
+            {
+                "enabled": true,
+                "display": true,
+                "productCount": 5,
+                "isLast": false,
+                "categoryList": [
+                    {
+                        "enabled": true,
+                        "display": true,
+                        "productCount": 7,
+                        "isLast": true,
+                        "categoryList": [],
+                        "id": 33,
+                        "name": "Acne Cares",
+                        "urlKey": "Acne-Cares"
+                    },
+                    {
+                        "enabled": false,
+                        "display": false,
+                        "productCount": 1,
+                        "isLast": true,
+                        "categoryList": [],
+                        "id": 57,
+                        "name": "test sub",
+                        "urlKey": "test-sub"
+                    }
+                ],
+                "id": 6,
+                "name": "Cleansing",
+                "urlKey": "cleansing"
+            },
+            {
+                "enabled": true,
+                "display": true,
+                "productCount": 1,
+                "isLast": true,
+                "categoryList": [],
+                "id": 9,
+                "name": "Body Care",
+                "urlKey": "body-care"
+            },
+            {
+                "enabled": true,
+                "display": true,
+                "productCount": 0,
+                "isLast": true,
+                "categoryList": [],
+                "id": 10,
+                "name": "Dietary Supplement\r\n",
+                "urlKey": "dietary-supplement"
+            },
+            {
+                "enabled": true,
+                "display": true,
+                "productCount": 0,
+                "isLast": true,
+                "categoryList": [],
+                "id": 11,
+                "name": "Makeup",
+                "urlKey": "makeup"
+            },
+            {
+                "enabled": true,
+                "display": true,
+                "productCount": 0,
+                "isLast": true,
+                "categoryList": [],
+                "id": 12,
+                "name": "Sunscreen",
+                "urlKey": "sunscreen"
+            },
+            {
+                "enabled": true,
+                "display": true,
+                "productCount": 0,
+                "isLast": true,
+                "categoryList": [],
+                "id": 13,
+                "name": "Dark spots",
+                "urlKey": "dark-spots"
+            },
+            {
+                "enabled": true,
+                "display": true,
+                "productCount": 0,
+                "isLast": true,
+                "categoryList": [],
+                "id": 14,
+                "name": "Freckles",
+                "urlKey": "freckles"
+            },
+            {
+                "enabled": true,
+                "display": true,
+                "productCount": 1,
+                "isLast": true,
+                "categoryList": [],
+                "id": 15,
+                "name": "Whitening",
+                "urlKey": "whitening"
+            }
+        ],
+        "id": 1,
+        "name": "By Product",
+        "urlKey": "By-Product"
+    },
+    {
+        "enabled": true,
+        "display": true,
+        "productCount": 37,
+        "isLast": false,
+        "categoryList": [
+            {
+                "enabled": true,
+                "display": false,
+                "productCount": 19,
+                "isLast": false,
+                "categoryList": [
+                    {
+                        "enabled": true,
+                        "display": false,
+                        "productCount": 24,
+                        "isLast": true,
+                        "categoryList": [],
+                        "id": 4,
+                        "name": "Value and Gift Sets",
+                        "urlKey": "value-and-gift-sets"
+                    }
+                ],
+                "id": 3,
+                "name": "Collection",
+                "urlKey": "Collection"
+            },
+            {
+                "enabled": true,
+                "display": true,
+                "productCount": 4,
+                "isLast": true,
+                "categoryList": [],
+                "id": 16,
+                "name": "Acne",
+                "urlKey": "acne"
+            },
+            {
+                "enabled": true,
+                "display": true,
+                "productCount": 0,
+                "isLast": true,
+                "categoryList": [],
+                "id": 17,
+                "name": "Wrinkles",
+                "urlKey": "wrinkles"
+            },
+            {
+                "enabled": true,
+                "display": true,
+                "productCount": 0,
+                "isLast": true,
+                "categoryList": [],
+                "id": 18,
+                "name": "Dry Skin",
+                "urlKey": "dry-skin"
+            },
+            {
+                "enabled": true,
+                "display": true,
+                "productCount": 0,
+                "isLast": true,
+                "categoryList": [],
+                "id": 20,
+                "name": "Dark Skin",
+                "urlKey": "dark-skin"
+            },
+            {
+                "enabled": true,
+                "display": true,
+                "productCount": 0,
+                "isLast": true,
+                "categoryList": [],
+                "id": 21,
+                "name": "Shape Problem",
+                "urlKey": "shape-problem"
+            },
+            {
+                "enabled": true,
+                "display": true,
+                "productCount": 0,
+                "isLast": true,
+                "categoryList": [],
+                "id": 22,
+                "name": "Dark spots",
+                "urlKey": "dark-spots"
+            },
+            {
+                "enabled": true,
+                "display": true,
+                "productCount": 0,
+                "isLast": true,
+                "categoryList": [],
+                "id": 23,
+                "name": "Freckles",
+                "urlKey": "freckles"
+            },
+            {
+                "enabled": true,
+                "display": true,
+                "productCount": 2,
+                "isLast": true,
+                "categoryList": [],
+                "id": 27,
+                "name": "in-test",
+                "urlKey": "in-test"
+            },
+            {
+                "enabled": false,
+                "display": false,
+                "productCount": 0,
+                "isLast": true,
+                "categoryList": [],
+                "id": 51,
+                "name": "Music",
+                "urlKey": "testcat"
+            },
+            {
+                "enabled": false,
+                "display": false,
+                "productCount": 0,
+                "isLast": true,
+                "categoryList": [],
+                "id": 54,
+                "name": "pap test",
+                "urlKey": "pap-test"
+            }
+        ],
+        "id": 2,
+        "name": "By Concern",
+        "urlKey": "By-Concern"
+    },
+    {
+        "enabled": true,
+        "display": false,
+        "productCount": 19,
+        "isLast": false,
+        "categoryList": [
+            {
+                "enabled": true,
+                "display": false,
+                "productCount": 24,
+                "isLast": true,
+                "categoryList": [],
+                "id": 4,
+                "name": "Value and Gift Sets",
+                "urlKey": "value-and-gift-sets"
+            }
+        ],
+        "id": 3,
+        "name": "Collection",
+        "urlKey": "Collection"
+    },
+    {
+        "enabled": true,
+        "display": false,
+        "productCount": 24,
+        "isLast": true,
+        "categoryList": [],
+        "id": 4,
+        "name": "Value and Gift Sets",
+        "urlKey": "value-and-gift-sets"
+    },
+    {
+        "enabled": true,
+        "display": true,
+        "productCount": 7,
+        "isLast": false,
+        "categoryList": [
+            {
+                "enabled": true,
+                "display": true,
+                "productCount": 2,
+                "isLast": true,
+                "categoryList": [],
+                "id": 48,
+                "name": "Costume",
+                "urlKey": "beach"
+            },
+            {
+                "enabled": true,
+                "display": true,
+                "productCount": 1,
+                "isLast": true,
+                "categoryList": [],
+                "id": 49,
+                "name": "Books",
+                "urlKey": "sand"
+            }
+        ],
+        "id": 28,
+        "name": "category test",
+        "urlKey": "category-test"
+    },
+    {
+        "enabled": true,
+        "display": true,
+        "productCount": 4,
+        "isLast": true,
+        "categoryList": [],
+        "id": 29,
+        "name": "category test",
+        "urlKey": "category-test-2"
+    },
+    {
+        "enabled": true,
+        "display": true,
+        "productCount": 3,
+        "isLast": false,
+        "categoryList": [
+            {
+                "enabled": true,
+                "display": true,
+                "productCount": 3,
+                "isLast": true,
+                "categoryList": [],
+                "id": 31,
+                "name": "new date meta",
+                "urlKey": "new date meta"
+            }
+        ],
+        "id": 30,
+        "name": "category set",
+        "urlKey": "new insert 003"
+    },
+    {
+        "enabled": true,
+        "display": true,
+        "productCount": 2,
+        "isLast": true,
+        "categoryList": [],
+        "id": 58,
+        "name": "Cosmetic",
+        "urlKey": "Hine"
+    },
+    {
+        "enabled": true,
+        "display": true,
+        "productCount": 4,
+        "isLast": false,
+        "categoryList": [
+            {
+                "enabled": true,
+                "display": true,
+                "productCount": 3,
+                "isLast": false,
+                "categoryList": [
+                    {
+                        "enabled": true,
+                        "display": true,
+                        "productCount": 3,
+                        "isLast": true,
+                        "categoryList": [],
+                        "id": 64,
+                        "name": "Camera",
+                        "urlKey": "Anti-Aging"
+                    },
+                    {
+                        "enabled": true,
+                        "display": true,
+                        "productCount": 0,
+                        "isLast": true,
+                        "categoryList": [],
+                        "id": 67,
+                        "name": "Bed",
+                        "urlKey": "Cleanser"
+                    },
+                    {
+                        "enabled": true,
+                        "display": true,
+                        "productCount": 0,
+                        "isLast": true,
+                        "categoryList": [],
+                        "id": 68,
+                        "name": "Exfoliant/Scrub",
+                        "urlKey": "Exfoliant/Scrub"
+                    }
+                ],
+                "id": 63,
+                "name": "Bag",
+                "urlKey": "Face"
+            }
+        ],
+        "id": 62,
+        "name": "Electronic",
+        "urlKey": "Skincare"
+    },
+    {
+        "enabled": true,
+        "display": true,
+        "productCount": 0,
+        "isLast": false,
+        "categoryList": [
+            {
+                "enabled": true,
+                "display": true,
+                "productCount": 0,
+                "isLast": true,
+                "categoryList": [],
+                "id": 66,
+                "name": "Table",
+                "urlKey": "testCateSub"
+            }
+        ],
+        "id": 65,
+        "name": "Chair",
+        "urlKey": "testCateRoot"
+    }
+]
