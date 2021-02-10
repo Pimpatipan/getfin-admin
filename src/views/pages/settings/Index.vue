@@ -275,6 +275,9 @@ export default {
       this.isDisable = false;
       if (data.result == 1) {
         this.$refs.modalAlert.show();
+        setTimeout(() => {
+            this.$refs.modalAlert.hide();
+          }, 3000);
       } else {
         this.$refs.modalAlertError.show();
       }

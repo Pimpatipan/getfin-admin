@@ -256,9 +256,7 @@ export default {
   },
   created: async function () {
     await this.getDatas();
-
-    var elmnt = document.getElementsByClassName("c-sidebar-nav-link")[0];
-    //var attr = elmnt.getAttributeNode("class").value;
+    await this.changeLanguage(1, 0);
   },
   methods: {
     isNumber: function (evt) {
@@ -282,7 +280,6 @@ export default {
       );
       if (languages.result == 1) {
         this.languageList = languages.detail;
-        this.changeLanguage(1, 0);
       }
 
       let data = await this.$callApi(
@@ -303,12 +300,13 @@ export default {
 
         if (this.form.faq.isSameLanguage) {
           this.imageLogoLang = "";
+          this.languageActive = this.form.faq.mainLanguageId;
         } else {
           var index = this.languageList
             .map(function (x) {
               return x.id;
             })
-            .indexOf(this.languageActive);
+            .indexOf(this.form.faq.mainLanguageId);
           this.imageLogoLang = this.languageList[index].imageUrl;
         }
 
@@ -318,8 +316,10 @@ export default {
       this.faqTopicId = VueCookies.get("faq_topic_id");
     },
     changeLanguage(id, index) {
-      this.languageActive = id;
-      this.imageLogoLang = this.languageList[index].imageUrl;
+      if (!this.form.faq.isSameLanguage) {
+        this.languageActive = id;
+        this.imageLogoLang = this.languageList[index].imageUrl;
+      }
     },
     checkForm: async function (flag) {
       if (this.form.faq.isSameLanguage) {
@@ -355,11 +355,15 @@ export default {
         this.$refs.modalAlert.show();
 
         if (this.flag == 1) {
-          setTimeout(function () {
-            window.location.href =
-              "/faq/details/" + VueCookies.get("faq_topic_id");
+          setTimeout(() => {
+            this.$router.push({
+              path: `/faq/details/` + VueCookies.get("faq_topic_id"),
+            });
           }, 3000);
         } else {
+          setTimeout(() => {
+            this.$refs.modalAlert.hide();
+          }, 3000);
           if (this.id > 0) {
             this.getDatas();
           } else {
@@ -443,6 +447,7 @@ export default {
     },
     btnDelete: async function () {
       this.$refs.isModalAlertConfirm.hide();
+       this.$refs.modalLoading.show();
       let resData = await this.$callApi(
         "delete",
         `${this.$baseUrl}/api/FAQ/remove/${this.id}`,
@@ -451,29 +456,16 @@ export default {
         null
       );
       this.modalMessage = resData.message;
+       this.$refs.modalLoading.hide();
       if (resData.result == 1) {
         this.$refs.modalAlert.show();
-        setTimeout(function () {
-          window.location.href =
-            "/faq/details/" + VueCookies.get("faq_topic_id");
+        setTimeout( ()=> {
+          this.$router.push({
+            path: `/faq/details/` + VueCookies.get("faq_topic_id"),
+          });
         }, 3000);
       } else {
         this.$refs.modalAlertError.show();
-      }
-    },
-    deleteData: async function () {
-      if (confirm("Are you sure you want to delete this data?") == true) {
-        let data = await this.$callApi(
-          "delete",
-          `${this.$baseUrl}/api/faq/remove/${this.id}`,
-          null,
-          this.$headers,
-          null
-        );
-
-        if (data.result == 1) {
-          window.location.href = "/faq";
-        }
       }
     },
   },

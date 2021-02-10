@@ -2,17 +2,17 @@
   <div>
     <div class="min-vh-100">
       <CRow class="no-gutters px-3 px-sm-0">
-        <b-col sm="6" class="text-center text-sm-left mb-3 mb-sm-0">
+        <b-col xl="4" class="text-center text-sm-left mb-3 mb-sm-0">
           <h1 class="mr-sm-4 header-main text-uppercase">
-            รายการข่าวสาร/โปรโมขั่น
+            รายการข่าวสาร/บทความที่น่าสนใจ
           </h1>
         </b-col>
-        <b-col sm="6" class="text-right">
-          <div class="d-flex">
+        <b-col xl="8" class="text-right">
+          <div class="d-flex justify-content-end">
             <b-input-group class="panel-input-serach">
               <b-form-input
                 class="input-serach"
-                placeholder="ชื่อข่าวสาร"
+                placeholder="ชื่อข่าวสาร/บทความที่น่าสนใจ"
                 v-model="filter.search"
                 @keyup="handleSearch"
               ></b-form-input>
@@ -23,7 +23,7 @@
               </b-input-group-prepend>
             </b-input-group>
             <router-link to="/news/details/0">
-              <b-button class="btn-main">สร้างข่าวสาร</b-button>
+              <b-button class="btn-main">สร้าง</b-button>
             </router-link>
           </div>
         </b-col>
@@ -44,7 +44,7 @@
             >
               <template v-slot:cell(imageUrl)="data">
                 <div
-                  class="image"
+                  class="image ratio-4-3-pt b-contain"
                   v-bind:style="{
                     'background-image': 'url(' + data.item.imageUrl + ')',
                   }"
@@ -59,7 +59,7 @@
                 }}</span>
               </template>
               <template v-slot:cell(newsTypeId)="data">
-                <div v-if="data.item.newsTypeId == 2" class="">โปรโมชั่น</div>
+                <div v-if="data.item.newsTypeId == 2" class="">บทความที่น่าสนใจ</div>
                 <div v-else class="">ข่าวสาร</div>
               </template>
               <template v-slot:cell(enabled)="data">
@@ -165,7 +165,7 @@ export default {
         {
           key: "name",
           label: "ชื่อ",
-          class: "w-100px",
+          class: "w-200",
         },
         {
           key: "sortOrder",
@@ -190,6 +190,7 @@ export default {
         {
           key: "id",
           label: "",
+          class: "w-100px",
         },
       ],
       items: [],
@@ -285,6 +286,9 @@ export default {
       this.modalMessage = resData.message;
       if (resData.result == 1) {
         this.$refs.modalAlert.show();
+        setTimeout(() => {
+            this.$refs.modalAlert.hide();
+          }, 3000);
         this.filter.Page = 1;
         await this.getList();
       } else {

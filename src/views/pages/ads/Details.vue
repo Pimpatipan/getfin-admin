@@ -135,7 +135,7 @@
               :v="$v.fileNameComputer"
             />
             <div
-              class="preview-box b-contain"
+              class="preview-box ratio-16-9-pb"
               v-if="coverImgType == 1"
               v-bind:style="{ 'background-image': 'url(' + showPreview + ')' }"
             >
@@ -169,7 +169,7 @@
               :v="$v.fileNameMobile"
             />
             <div
-              class="preview-box b-contain"
+              class="preview-box ratio-16-9-pb"
               v-if="mobileCoverImgType == 1"
               v-bind:style="{
                 'background-image': 'url(' + mobileShowPreview + ')',
@@ -232,12 +232,11 @@
               @click="openModalDelete(form.banner.name)"
               >ลบ</b-button
             >
-            <b-button
-              href="/ads"
-              :disabled="isDisable"
-              class="btn-details-set btn-cancel"
-              >ย้อนกลับ</b-button
-            >
+            <router-link to="/ads">
+              <b-button :disabled="isDisable" class="btn-details-set btn-cancel"
+                >ย้อนกลับ</b-button
+              >
+            </router-link>
           </b-col>
           <b-col md="6" class="text-sm-right">
             <button
@@ -293,7 +292,7 @@ export default {
     ModalAlert,
     ModalAlertError,
     ModalAlertConfirm,
-    ModalLoading
+    ModalLoading,
   },
   data() {
     return {
@@ -362,11 +361,12 @@ export default {
       },
     },
   },
-  created: async function() {
+  created: async function () {
     await this.getDatas();
+    await this.changeLanguage(1, 0);
   },
   methods: {
-    isNumber: function(evt) {
+    isNumber: function (evt) {
       evt = evt ? evt : window.event;
       var charCode = evt.which ? evt.which : evt.keyCode;
       if (charCode > 31 && (charCode < 48 || charCode > 57)) {
@@ -375,10 +375,10 @@ export default {
         return true;
       }
     },
-    changeSameLang: function(value) {
+    changeSameLang: function (value) {
       this.form.isSameLanguage = value;
     },
-    setAlttag: function(value) {
+    setAlttag: function (value) {
       this.languageList.forEach((element, index) => {
         this.form.bannerTranslationList[index].altTag = value.replace(
           / /g,
@@ -386,25 +386,11 @@ export default {
         );
       });
     },
-    setAlttagByLang: function(value, index) {
+    setAlttagByLang: function (value, index) {
       this.form.bannerTranslationList[index].altTag = value.replace(/ /g, "-");
     },
-    handleCloseModal: function() {
-      if (this.flag == 1) {
-        window.location.href = "/ads";
-      } else {
-        if (this.id > 0) {
-          this.getDatas();
-        } else {
-          this.form.banner.id = this.existId;
-          this.id = this.existId;
-          this.isEdit = true;
-          this.$router.push({ path: `/ads/details/${this.existId}` });
-        }
-      }
-    },
-    getDatas: async function() {
-      this.$isLoading  = false;
+    getDatas: async function () {
+      this.$isLoading = false;
 
       let languages = await this.$callApi(
         "get",
@@ -415,8 +401,8 @@ export default {
       );
       if (languages.result == 1) {
         this.languageList = languages.detail;
-        this.changeLanguage(1, 0);
       }
+
       let data = await this.$callApi(
         "get",
         `${this.$baseUrl}/api/bannerAds/${this.id}`,
@@ -427,7 +413,7 @@ export default {
 
       if (data.result == 1) {
         this.form = data.detail;
-        
+
         //this.$v.form.$reset();
 
         if (this.form.banner.id > 0) {
@@ -449,14 +435,15 @@ export default {
           }
         }
 
-        this.$isLoading  = true;
+        this.$isLoading = true;
       }
 
       if (this.form.isSameLanguage) {
         this.imageLogoLang = "";
+        this.languageActive = this.form.banner.mainLanguageId;
       } else {
         var index = this.languageList
-          .map(function(x) {
+          .map(function (x) {
             return x.id;
           })
           .indexOf(this.languageActive);
@@ -464,8 +451,10 @@ export default {
       }
     },
     changeLanguage(id, index) {
-      this.languageActive = id;
-      this.imageLogoLang = this.languageList[index].imageUrl;
+      if (!this.form.isSameLanguage) {
+        this.languageActive = id;
+        this.imageLogoLang = this.languageList[index].imageUrl;
+      }
     },
     onImageChange(img) {
       this.isLoadingImage = true;
@@ -497,7 +486,7 @@ export default {
         }
       };
     },
-    saveImagetoDb: async function(img) {
+    saveImagetoDb: async function (img) {
       var imgData = {
         base64: img,
       };
@@ -568,7 +557,7 @@ export default {
         this.mobileCoverImgType = 1;
       }
     },
-    checkForm: async function(flag) {
+    checkForm: async function (flag) {
       if (this.form.isSameLanguage) {
         await this.useSameLanguage();
       }
@@ -581,7 +570,7 @@ export default {
       this.flag = flag;
       this.submit();
     },
-    submit: async function() {
+    submit: async function () {
       this.isDisable = true;
       this.$refs.modalLoading.show();
 
@@ -602,10 +591,15 @@ export default {
         this.$refs.modalAlert.show();
 
         if (this.flag == 1) {
-          setTimeout(function() {
-            window.location.href = "/ads";
+          setTimeout(() => {
+            this.$router.push({
+              path: `/ads`,
+            });
           }, 3000);
         } else {
+          setTimeout(() => {
+            this.$refs.modalAlert.hide();
+          }, 3000);
           if (this.id > 0) {
             this.getDatas();
           } else {
@@ -619,37 +613,37 @@ export default {
         this.$refs.modalAlertError.show();
       }
     },
-    useSameLanguage: async function() {
+    useSameLanguage: async function () {
       Vue.nextTick(() => {
         if (this.form.isSameLanguage) {
           this.imageLogoLang = "";
           this.form.banner.mainLanguageId = this.languageActive;
           let data = this.form.bannerTranslationList.filter(
-            val => val.languageId == this.form.banner.mainLanguageId
+            (val) => val.languageId == this.form.banner.mainLanguageId
           );
 
           //if (this.id == 0) {
-            if (data.length == 1) {
-              data = data[0];
-              for (
-                let index = 0;
-                index < this.form.bannerTranslationList.length;
-                index++
-              ) {
-                this.form.bannerTranslationList[index].altTag = data.altTag;
-              }
+          if (data.length == 1) {
+            data = data[0];
+            for (
+              let index = 0;
+              index < this.form.bannerTranslationList.length;
+              index++
+            ) {
+              this.form.bannerTranslationList[index].altTag = data.altTag;
             }
+          }
           //}
         } else {
           var index = this.languageList
-            .map(function(x) {
+            .map(function (x) {
               return x.id;
             })
             .indexOf(this.languageActive);
           this.imageLogoLang = this.languageList[index].imageUrl;
 
           let data = this.form.bannerTranslationList.filter(
-            val => val.languageId != this.form.banner.mainLanguageId
+            (val) => val.languageId != this.form.banner.mainLanguageId
           );
           if (this.id == 0) {
             if (data.length == 1) {
@@ -660,7 +654,7 @@ export default {
         }
       });
     },
-    checkValidateTranslationList: async function() {
+    checkValidateTranslationList: async function () {
       let isError = false;
       this.languageList.forEach((element, index) => {
         if (!isError) {
@@ -676,8 +670,9 @@ export default {
         }
       });
     },
-    btnDelete: async function() {
+    btnDelete: async function () {
       this.$refs.isModalAlertConfirm.hide();
+      this.$refs.modalLoading.show();
 
       let resData = await this.$callApi(
         "delete",
@@ -686,11 +681,14 @@ export default {
         this.$headers,
         null
       );
-      this.modalMessage = resData.message;
+      this.modalMessage = resData.message || resData.detail[0];
+      this.$refs.modalLoading.hide();
       if (resData.result == 1) {
         this.$refs.modalAlert.show();
-        setTimeout(function() {
-          window.location.href = "/ads";
+        setTimeout(() => {
+          this.$router.push({
+            path: `/ads`,
+          });
         }, 3000);
       } else {
         this.$refs.modalAlertError.show();
@@ -699,21 +697,6 @@ export default {
     openModalDelete(name) {
       this.modalMessage = "คุณต้องการลบ " + name + " ใช่หรือไม่?";
       this.$refs.isModalAlertConfirm.show();
-    },
-    deleteData: async function() {
-      if (confirm("Are you sure you want to delete this data?") == true) {
-        let data = await this.$callApi(
-          "delete",
-          `${this.$baseUrl}/api/bannerAds/remove/${this.id}`,
-          null,
-          this.$headers,
-          null
-        );
-
-        if (data.result == 1) {
-          window.location.href = "/ads";
-        }
-      }
     },
   },
 };

@@ -37,6 +37,7 @@
               v-bind:key="index"
               v-bind:class="[languageActive == language.id ? 'active' : '']"
               @click="changeLanguage(language.id, index)"
+              :disabled="form.isSameLanguage ? true : false"
             >
               <span class="text-uppercase">{{ language.nation }}</span>
             </b-button>
@@ -48,7 +49,7 @@
             <div v-for="(item, index) in form.translations" v-bind:key="index">
               <div
                 v-bind:class="[
-                  languageActive == item.languageId ? '' : 'd-none'
+                  languageActive == item.languageId ? '' : 'd-none',
                 ]"
               >
                 <InputText
@@ -60,6 +61,10 @@
                   v-model="item.name"
                   @onKeyup="setAlttag(item.name)"
                   isRequired
+                   :isValidate="
+                    $v.form.translations.$each.$iter[index].name.$error
+                  "
+                  :v="$v.form.translations.$each.$iter[index].name"
                 />
               </div>
             </div>
@@ -71,7 +76,7 @@
             <div v-for="(item, index) in form.translations" v-bind:key="index">
               <div
                 v-bind:class="[
-                  languageActive == item.languageId ? '' : 'd-none'
+                  languageActive == item.languageId ? '' : 'd-none',
                 ]"
               >
                 <InputTextArea
@@ -83,7 +88,11 @@
                   name="desc"
                   :img="imageLogoLang"
                   v-model="item.shortDescription"
-                  isRequired
+                   isRequired
+                   :isValidate="
+                    $v.form.translations.$each.$iter[index].shortDescription.$error
+                  "
+                  :v="$v.form.translations.$each.$iter[index].shortDescription"
                 />
               </div>
             </div>
@@ -93,7 +102,7 @@
         <b-row>
           <b-col md="6">
             <label class="label-text">
-              วันแสดงแคมเปญ
+              วันแสดงแคมเปญ (เริ่มต้น)
               <span class="text-danger">*</span>
             </label>
             <datetime
@@ -109,7 +118,9 @@
             </p>
           </b-col>
           <b-col md="6">
-            <label class="label-text"> </label>
+            <label class="label-text"
+              >วันแสดงแคมเปญ (สิ้นสุด) <span class="text-danger">*</span></label
+            >
             <datetime
               placeholder="กรุณาเลือกวันที่"
               class="date-picker"
@@ -124,7 +135,7 @@
         <b-row class="mt-2">
           <b-col md="6">
             <label class="label-text">
-              วันที่เข้าร่วมแคมเปญ
+              วันที่เข้าร่วมแคมเปญ (เริ่มต้น)
               <span class="text-danger">*</span>
             </label>
             <datetime
@@ -140,7 +151,10 @@
             </p>
           </b-col>
           <b-col md="6">
-            <label class="label-text"> </label>
+            <label class="label-text">
+              วันที่เข้าร่วมแคมเปญ (สิ้นสุด)
+              <span class="text-danger">*</span></label
+            >
             <datetime
               placeholder="กรุณาเลือกวันที่"
               class="date-picker"
@@ -217,8 +231,13 @@
               type="button"
               class="btn btn-main text-uppercase w-auto"
               @click="showCategoryModal"
+              :disabled="loadCatData"
             >
               เลือกหมวดหมู่ที่เข้าร่วม
+              <b-spinner
+                class="align-middle ml-1"
+                v-if="loadCatData"
+              ></b-spinner>
             </button>
             <div class="d-inline-block">
               <span class="ml-2">สามารถเข้าร่วมได้ {{ count }} หมวดหมู่</span>
@@ -246,7 +265,7 @@
               class="preview-box b-contain"
               v-if="coverImgType == 1"
               v-bind:style="{
-                'background-image': 'url(' + form.banner.imageUrl + ')'
+                'background-image': 'url(' + form.banner.imageUrl + ')',
               }"
             >
               <img
@@ -272,21 +291,21 @@
             <div v-for="(item, index) in form.translations" v-bind:key="index">
               <div
                 v-bind:class="[
-                  languageActive == item.languageId ? '' : 'd-none'
+                  languageActive == item.languageId ? '' : 'd-none',
                 ]"
               >
                 <b-row class="mt-3">
                   <b-col>
                     <TextEditor
                       v-if="$isLoading"
-                      textFloat="คำอธิบาย"
+                      textFloat="รายละเอียดแคมเปญ"
                       :rows="8"
                       :value="item.description"
                       :name="'description_' + item.languageId"
                       :img="imageLogoLang"
                       placeholder="Type something..."
                       isRequired
-                      @onDataChange="val => (item.description = val)"
+                      @onDataChange="(val) => (item.description = val)"
                     />
                   </b-col>
                 </b-row>
@@ -314,11 +333,10 @@
               @click="openModalDelete(form.translations[0].name)"
               >ลบ</b-button
             >
-            <b-button
-              href="/campaign"
-              :disabled="isDisable"
-              class="btn-details-set btn-cancel"
-              >ย้อนกลับ</b-button
+            <router-link to="/campaign">
+              <b-button :disabled="isDisable" class="btn-details-set btn-cancel"
+                >ย้อนกลับ</b-button
+              ></router-link
             >
           </b-col>
           <b-col md="6" class="text-sm-right">
@@ -352,6 +370,7 @@
         ref="isModalAlertConfirm"
         @confirm="btnDelete"
       />
+      <ModalLoading ref="modalLoading" :hasClose="false" />
 
       <b-modal
         id="selectCategoryModal"
@@ -377,13 +396,13 @@
         </div>
         <div class="">
           <b-row>
-            <b-col lg="10">
+            <b-col lg="9">
               <b-form-input
                 placeholder="ค้นหาชื่อหมวดหมู่"
                 @keyup="handleSearch"
               ></b-form-input>
             </b-col>
-            <b-col lg="2">
+            <b-col lg="3" class="text-right">
               <b-form-checkbox
                 id="checkboxs-3"
                 class="p-0 ml-4 mt-2 mt-lg-0"
@@ -394,35 +413,47 @@
             >
           </b-row>
 
-          {{ form.categories }}
-
-          <b-row class="ml-2 mt-3">
-            <b-col
-              cols="6"
-              sm="4"
-              class="mb-3"
-              v-for="(item, index) in catLists"
-              :key="index"
-            >
-              <b-form-checkbox
-                :id="'checkbox-' + index"
-                v-model="form.categories[catIndex]"
-                :value="item.id"
-                :unchecked-value="item.id"
-                :class="[
-                  'p-0',
-                  {
-                    'd-none':
-                      form.categories[catIndex].indexOf(item.id) == -1 &&
-                      isInCat
-                  }
-                ]"
-                @change="val => onChangeCategory(val, item, index)"
+          <div class="p-5" v-if="isLoadingCatData">
+            <div class="text-center text-black my-2">
+              <b-spinner class="align-middle"></b-spinner>
+              <strong class="ml-2">Loading...</strong>
+            </div>
+          </div>
+          <div v-else>
+            <div>
+              <b-form-checkbox ref="selectAll" v-model="selectAll" class="mt-3"
+                >เลือกทั้งหมด</b-form-checkbox
               >
-                {{ item.name }}
-              </b-form-checkbox>
-            </b-col>
-          </b-row>
+            </div>
+
+            <b-row class="ml-2 mt-3">
+              <b-col
+                cols="6"
+                sm="4"
+                class="mb-3"
+                v-for="(item, index) in catLists"
+                :key="index"
+              >
+                <b-form-checkbox
+                  :id="'checkbox-' + index"
+                  v-model="form.categories[catIndex]"
+                  :value="item.id"
+                  :unchecked-value="item.id"
+                  :class="[
+                    'p-0',
+                    {
+                      'd-none':
+                        form.categories[catIndex].indexOf(item.id) == -1 &&
+                        isInCat,
+                    },
+                  ]"
+                  @change="(val) => onChangeCategory(val, item, index)"
+                >
+                  {{ item.name }}
+                </b-form-checkbox>
+              </b-col>
+            </b-row>
+          </div>
 
           <b-row class="mt-3">
             <b-col md="6">
@@ -477,6 +508,7 @@ import ModalAlertError from "@/components/modal/alert/ModalAlertError";
 import ModalAlertConfirm from "@/components/modal/alert/ModalAlertConfirm";
 import InputSelect from "@/components/inputs/InputSelect";
 import * as moment from "moment/moment";
+import ModalLoading from "@/components/modal/alert/ModalLoading";
 
 export default {
   name: "CampaignDetails",
@@ -489,11 +521,13 @@ export default {
     ModalAlert,
     ModalAlertError,
     ModalAlertConfirm,
-    InputSelect
+    InputSelect,
+    ModalLoading,
   },
   data() {
     return {
       isLoadingImage: false,
+      isLoadingCatData: false,
       min: false,
       discount: false,
       coverImgType: 1,
@@ -509,6 +543,7 @@ export default {
       isDisable: false,
       isInCat: false,
       noNext: false,
+      loadCatData: false,
       filename: "",
       id: this.$route.params.id,
       languageList: [],
@@ -527,9 +562,10 @@ export default {
       form: null,
       request: {
         ParentId: [0],
-        Search: ""
+        Search: "",
       },
-      disableIsLast: true
+      disableIsLast: true,
+      selectAll: false,
     };
   },
   validations: {
@@ -541,26 +577,57 @@ export default {
           description: { required },
           metaTitle: { required },
           metaKeyword: { required },
-          metaDescription: { required }
+          metaDescription: { required },
+        },
+      },
+    },
+  },
+  watch: {
+    selectAll: function () {
+      if (this.form.categories[this.catIndex].length != this.catLists.length) {
+        if (this.selectAll) {
+          this.form.categories[this.catIndex] = [];
+          this.catLists.forEach((element, index) => {
+            this.form.categories[this.catIndex].push(element.id);
+            this.tempArrayFilterd.push(element);
+          });
+        }
+      } else {
+        if (!this.selectAll) {
+          this.form.categories[this.catIndex] = [];
+          this.tempArrayFilterd = [];
         }
       }
-    }
+      this.checkDisableBtn();
+    },
+    "form.categories": function () {
+      if (this.catLists.length != 0) {
+        if (
+          this.form.categories[this.catIndex].length == this.catLists.length
+        ) {
+          this.selectAll = true;
+        } else {
+          this.selectAll = false;
+        }
+      }
+    },
   },
   computed: {
-    count: function() {
+    count: function () {
       var catCount = 0;
       for (var i = 0; i < this.form.categories.length - 1; i++) {
         catCount += this.form.categories[i].length;
       }
       return catCount;
-    }
+    },
   },
-  created: async function() {
+  created: async function () {
     this.$isLoading = true;
     await this.getDatas();
+    await this.changeLanguage(1, 0);
   },
   methods: {
-    moment: function() {
+    moment: function () {
       return moment();
     },
     pagination(Page) {
@@ -572,7 +639,7 @@ export default {
       this.filter.perPage = value;
       this.getList();
     },
-    isNumber: function(evt) {
+    isNumber: function (evt) {
       evt = evt ? evt : window.event;
       var charCode = evt.which ? evt.which : evt.keyCode;
       if (charCode > 31 && (charCode < 48 || charCode > 57)) {
@@ -581,10 +648,10 @@ export default {
         return true;
       }
     },
-    changeSameLang: function(value) {
+    changeSameLang: function (value) {
       this.form.isSameLanguage = value;
     },
-    setAlttag: function(value) {
+    setAlttag: function (value) {
       this.languageList.forEach((element, index) => {
         this.form.translations[index].metaTitle = value;
         this.form.translations[index].metaKeyword = value;
@@ -593,10 +660,10 @@ export default {
       });
       this.form.urlKey = value.replace(/ /g, "-").replace(/\//g, "");
     },
-    onUrlkeyChange: function(value) {
+    onUrlkeyChange: function (value) {
       this.form.urlKey = this.form.urlKey.replace(/ /g, "-").replace(/\//g, "");
     },
-    setAlttagByLang: function(value, index) {
+    setAlttagByLang: function (value, index) {
       this.form.translations[index].altTag = value.replace(/ /g, "-");
     },
     onChangeShowSelected(value) {
@@ -606,7 +673,7 @@ export default {
 
       this.getList();
     },
-    getDatas: async function() {
+    getDatas: async function () {
       this.$isLoading = false;
 
       let languages = await this.$callApi(
@@ -618,7 +685,6 @@ export default {
       );
       if (languages.result == 1) {
         this.languageList = languages.detail;
-        this.changeLanguage(1, 0);
       }
       let data = await this.$callApi(
         "get",
@@ -638,12 +704,26 @@ export default {
           this.form.endDateJoinCampaign = new Date();
         }
 
+        if (this.form.isSameLanguage) {
+          this.imageLogoLang = "";
+          this.languageActive = this.form.mainLanguageId;
+        } else {
+          var index = this.languageList
+            .map(function (x) {
+              return x.id;
+            })
+            .indexOf(this.form.mainLanguageId);
+          this.imageLogoLang = this.languageList[index].imageUrl;
+        }
+
         this.$isLoading = true;
       }
     },
     changeLanguage(id, index) {
-      this.languageActive = id;
-      this.imageLogoLang = this.languageList[index].imageUrl;
+      if (!this.form.isSameLanguage) {
+        this.languageActive = id;
+        this.imageLogoLang = this.languageList[index].imageUrl;
+      }
     },
     onImageChange(img) {
       this.isLoadingImage = true;
@@ -657,8 +737,8 @@ export default {
         this.isLoadingImage = false;
         this.isDisable = false;
 
-        this.showPreview = this.images;
-        this.form.banner.imageUrl = this.images;
+        this.showPreview = this.images; //this.images;
+        this.form.banner.imageUrl = this.images; //this.images;
         this.form.banner.imageBase64 = reader.result;
 
         if (img.type == "video/mp4") {
@@ -674,9 +754,9 @@ export default {
         }
       };
     },
-    saveImagetoDb: async function(img) {
+    saveImagetoDb: async function (img) {
       var imgData = {
-        base64: img
+        base64: img,
       };
 
       let data = await this.$callApi(
@@ -692,8 +772,8 @@ export default {
       }
     },
     deleteImage(value) {
-      this.form.imageUrl = "";
-      this.form.imageBase64 = null;
+      this.form.banner.imageUrl = "";
+      this.form.banner.imageBase64 = null;
       this.showPreview = null;
 
       if (this.coverImgType == 2) {
@@ -702,10 +782,25 @@ export default {
         this.coverImgType = 1;
       }
     },
-    checkForm: async function(flag) {
+    checkForm: async function (flag) {
       if (this.form.isSameLanguage) {
         await this.useSameLanguage();
       }
+
+      if (this.form.startDateCampaign > this.form.endDateCampaign) {
+        this.modalMessage =
+          "วันสิ้นสุดการแสดงแคมเปญต้องมากกว่าวันเริ่มต้นการแสดงแคมเปญ";
+        this.$refs.modalAlertError.show();
+        return;
+      }
+
+      if (this.form.startDateJoinCampaign > this.form.endDateJoinCampaign) {
+        this.modalMessage =
+          "วันสิ้นสุดที่เข้าร่วมแคมเปญต้องมากกว่าวันเริ่มต้นที่เข้าร่วมแคมเปญ";
+        this.$refs.modalAlertError.show();
+        return;
+      }
+
       this.$v.form.$touch();
       if (this.$v.form.$error) {
         this.$nextTick(() => {
@@ -734,8 +829,9 @@ export default {
       this.flag = flag;
       this.submit();
     },
-    submit: async function() {
+    submit: async function () {
       this.isDisable = true;
+      this.$refs.modalLoading.show();
 
       let data = await this.$callApi(
         "patch",
@@ -749,13 +845,19 @@ export default {
       this.isDisable = false;
       if (data.result == 1) {
         this.existId = data.detail;
+        this.$refs.modalLoading.hide();
         this.$refs.modalAlert.show();
 
         if (this.flag == 1) {
-          setTimeout(function() {
-            window.location.href = "/Campaign";
+          setTimeout(() => {
+            this.$router.push({
+              path: `/Campaign`,
+            });
           }, 3000);
         } else {
+          setTimeout(() => {
+            this.$refs.modalAlert.hide();
+          }, 3000);
           if (this.id > 0) {
             this.getDatas();
           } else {
@@ -770,21 +872,25 @@ export default {
         this.$refs.modalAlertError.show();
       }
     },
-    btnDelete: async function() {
+    btnDelete: async function () {
       this.$refs.isModalAlertConfirm.hide();
+      this.$refs.modalLoading.show();
 
       let resData = await this.$callApi(
         "delete",
-        `${this.$baseUrl}/api/news/delete/${this.id}`,
+        `${this.$baseUrl}/api/Campaign/delete/${this.campaignId}`,
         null,
         this.$headers,
         null
       );
+      this.$refs.modalLoading.hide();
       this.modalMessage = resData.message;
       if (resData.result == 1) {
         this.$refs.modalAlert.show();
-        setTimeout(function() {
-          window.location.href = "/news";
+        setTimeout(() => {
+          this.$router.push({
+            path: `/Campaign`,
+          });
         }, 3000);
       } else {
         this.$refs.modalAlertError.show();
@@ -794,14 +900,14 @@ export default {
       this.modalMessage = "คุณต้องการลบ " + name + " ใช่หรือไม่?";
       this.$refs.isModalAlertConfirm.show();
     },
-    useSameLanguage: async function() {
+    useSameLanguage: async function () {
       Vue.nextTick(() => {
         if (this.form.isSameLanguage) {
           this.imageLogoLang = "";
 
           this.form.mainLanguageId = this.languageActive;
           let data = this.form.translations.filter(
-            val => val.languageId == this.form.mainLanguageId
+            (val) => val.languageId == this.form.mainLanguageId
           );
 
           //if (this.id == 0) {
@@ -826,14 +932,14 @@ export default {
         //}
         else {
           var index = this.languageList
-            .map(function(x) {
+            .map(function (x) {
               return x.id;
             })
             .indexOf(this.languageActive);
           this.imageLogoLang = this.languageList[index].imageUrl;
 
           let data = this.form.translations.filter(
-            val => val.languageId != this.form.mainLanguageId
+            (val) => val.languageId != this.form.mainLanguageId
           );
           if (this.id == 0) {
             if (data.length == 1) {
@@ -849,7 +955,7 @@ export default {
         }
       });
     },
-    checkValidatetranslations: async function() {
+    checkValidatetranslations: async function () {
       let isError = false;
       this.languageList.forEach((element, index) => {
         if (!isError) {
@@ -865,29 +971,17 @@ export default {
         }
       });
     },
-    deleteData: async function() {
-      if (confirm("Are you sure you want to delete this data?") == true) {
-        let data = await this.$callApi(
-          "delete",
-          `${this.$baseUrl}/api/banner/remove/${this.id}`,
-          null,
-          this.$headers,
-          null
-        );
-
-        if (data.result == 1) {
-          window.location.href = "/banner";
-        }
-      }
-    },
-    showCategoryModal: async function() {
+    showCategoryModal: async function () {
+      this.loadCatData = true;
       this.catLevel = 1;
       this.catIndex = 0;
       this.request.ParentId = [0];
       await this.getSubCategoryList();
+      this.loadCatData = false;
       this.$refs.selectCategoryModal.show();
     },
-    getSubCategoryList: async function() {
+    getSubCategoryList: async function () {
+      this.isLoadingCatData = true;
       let data = await this.$callApi(
         "post",
         `${this.$baseUrl}/api/category/SubCategory/List`,
@@ -904,16 +998,25 @@ export default {
         } else {
           this.disableIsLast = false;
         }
+
+        if (
+          this.form.categories[this.catIndex].length == this.catLists.length
+        ) {
+          this.selectAll = true;
+        } else {
+          this.selectAll = false;
+        }
       }
+      this.isLoadingCatData = false;
     },
-    getSubCategoryAnotherLevel: async function() {
+    getSubCategoryAnotherLevel: async function () {
       this.request.ParentId = this.form.categories[this.catIndex];
       this.catLevel++;
       this.catIndex++;
       await this.getSubCategoryList();
       await this.filterArray();
     },
-    goBackSubCategoryAnotherLevel: async function() {
+    goBackSubCategoryAnotherLevel: async function () {
       this.catLevel--;
 
       if (this.catLevel == 1) this.request.ParentId = [0];
@@ -930,7 +1033,7 @@ export default {
           for (var j = 0; j < data.childId.length; j++) {
             if (this.form.categories[i].indexOf(data.childId[j]) != -1) {
               var index = this.form.categories[i].indexOf(data.childId[j]);
-              this.form.categories[i].splice(index, 1);
+              //this.form.categories[i].splice(index, 1);
             }
           }
         }
@@ -955,7 +1058,7 @@ export default {
           this.tempArrayFilterd.push(data);
         } else {
           var index = this.tempArrayFilterd
-            .map(x => {
+            .map((x) => {
               return x.id;
             })
             .indexOf(data.id);
@@ -979,8 +1082,8 @@ export default {
         this.request.Search = e.target.value;
         this.getSubCategoryList();
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -1018,5 +1121,10 @@ export default {
 }
 .banner-video::before {
   padding-top: 42.9%;
+}
+
+::v-deep .spinner-border {
+  width: 1rem;
+  height: 1rem;
 }
 </style>

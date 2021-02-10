@@ -147,8 +147,8 @@
           </b-col>
           <b-col md="6">
             <InputText
-              textFloat="ใช้ได้มากสุด"
-              placeholder="ใช้ได้มากสุด"
+              textFloat="จำนวนวอชเชอร์"
+              placeholder="จำนวนวอชเชอร์"
               type="text"
               name="maximum"
               isRequired
@@ -169,7 +169,7 @@
             <b-row class="mb-3 mb-sm-0">
               <b-col cols="6" class="mb-1 mb-sm-0">
                 <b-form-radio
-                  name="some-radios"
+                  name="some-radios-type"
                   v-model="form.bathOrPercent"
                   value="0"
                   @change="onChangeVoucherType($event)"
@@ -178,7 +178,7 @@
               </b-col>
               <b-col cols="6" class="mb-1 mb-sm-0">
                 <b-form-radio
-                  name="some-radios"
+                  name="some-radios-type"
                   v-model="form.bathOrPercent"
                   value="1"
                   @change="onChangeVoucherType($event)"
@@ -205,6 +205,49 @@
         <b-row>
           <b-col md="6">
             <label class="label-text">
+              วันที่สามารถแลกวอชเชอร์ได้ (เริ่มต้น)
+              <span class="text-danger">*</span>
+            </label>
+            <datetime
+              placeholder="กรุณาเลือกวันที่"
+              class="date-picker"
+              format="dd/MM/yyyy"
+              value-zone="local"
+              v-model="form.startDate"
+              :isValidate="$v.form.startDate.$error"
+              :v="$v.form.startDate"
+            ></datetime>
+            <p class="text-danger f-14" v-if="error">
+              วันที่สามารถแลกวอชเชอร์ได้ (เริ่มต้น)
+              ต้องมาก่อนวันที่สามารถแลกวอชเชอร์ได้ (สิ้นสุด)
+            </p>
+            <p class="text-danger f-14" v-if="$v.form.startDate.$error">
+              กรุณากรอกข้อมูล
+            </p>
+          </b-col>
+          <b-col md="6" class="mt-3 mt-md-0">
+            <label class="label-text">
+              วันที่สามารถแลกวอชเชอร์ได้ (สิ้นสุด)
+              <span class="text-danger">*</span>
+            </label>
+            <datetime
+              placeholder="กรุณาเลือกวันที่"
+              class="date-picker"
+              format="dd/MM/yyyy"
+              value-zone="local"
+              v-model="form.endDate"
+              :isValidate="$v.form.endDate.$error"
+              :v="$v.form.endDate"
+            ></datetime>
+            <p class="text-danger f-14" v-if="$v.form.endDate.$error">
+              กรุณากรอกข้อมูล
+            </p>
+          </b-col>
+        </b-row>
+
+        <b-row class="mt-3">
+          <b-col md="6">
+            <label class="label-text">
               วันที่สามารถใช้วอชเชอร์ได้ (เริ่มต้น)
               <span class="text-danger">*</span>
             </label>
@@ -225,7 +268,7 @@
               กรุณากรอกข้อมูล
             </p>
           </b-col>
-          <b-col md="6">
+          <b-col md="6" class="mt-3 mt-md-0">
             <label class="label-text">
               วันที่สามารถใช้วอชเชอร์ได้ (สิ้นสุด)
               <span class="text-danger">*</span>
@@ -245,49 +288,7 @@
           </b-col>
         </b-row>
 
-        <b-row>
-          <b-col md="6">
-            <label class="label-text">
-              วันที่ใช้งานเริ่มต้น
-              <span class="text-danger">*</span>
-            </label>
-            <datetime
-              placeholder="กรุณาเลือกวันที่"
-              class="date-picker"
-              format="dd/MM/yyyy"
-              value-zone="local"
-              v-model="form.startDate"
-              :isValidate="$v.form.startDate.$error"
-              :v="$v.form.startDate"
-            ></datetime>
-            <p class="text-danger f-14" v-if="error">
-              วันที่ใช้งานเริ่มต้นต้องมาก่อนวันที่ใช้งานสิ้นสุด
-            </p>
-            <p class="text-danger f-14" v-if="$v.form.startDate.$error">
-              กรุณากรอกข้อมูล
-            </p>
-          </b-col>
-          <b-col md="6">
-            <label class="label-text">
-              วันที่ใช้งานสิ้นสุด
-              <span class="text-danger">*</span>
-            </label>
-            <datetime
-              placeholder="กรุณาเลือกวันที่"
-              class="date-picker"
-              format="dd/MM/yyyy"
-              value-zone="local"
-              v-model="form.endDate"
-              :isValidate="$v.form.endDate.$error"
-              :v="$v.form.endDate"
-            ></datetime>
-            <p class="text-danger f-14" v-if="$v.form.endDate.$error">
-              กรุณากรอกข้อมูล
-            </p>
-          </b-col>
-        </b-row>
-
-        <b-row>
+        <b-row class="mt-3">
           <b-col md="6" class="mb-3 mb-md-0">
             <InputText
               textFloat="Prefix"
@@ -299,6 +300,31 @@
               :isValidate="$v.form.prefix.$error"
               :v="$v.form.prefix"
             />
+
+            <label class="font-weight-bold main-label mb-2">
+              ประเภทการใช้วอชเชอร์
+            </label>
+
+            <b-row class="mb-3 mb-sm-0">
+              <b-col cols="6" class="mb-1 mb-sm-0">
+                <b-form-radio
+                  name="some-radios"
+                  v-model="form.isOneTimeUsed"
+                  :value="true"
+                  @change="onChangeVoucherTypeUse($event)"
+                  >ใช้ได้ครั้งเดียว
+                </b-form-radio>
+              </b-col>
+              <b-col cols="6" class="mb-1 mb-sm-0">
+                <b-form-radio
+                  name="some-radios"
+                  v-model="form.isOneTimeUsed"
+                  :value="false"
+                  @change="onChangeVoucherTypeUse($event)"
+                  >ใช้ได้หลายครั้ง</b-form-radio
+                >
+              </b-col>
+            </b-row>
           </b-col>
           <b-col md="6">
             <UploadFile
@@ -413,11 +439,10 @@
               @click="openModalDelete(form.translationList[0].name)"
               >ลบ</b-button
             >
-            <b-button
-              href="/voucher"
-              :disabled="isDisable"
-              class="btn-details-set btn-cancel"
-              >ย้อนกลับ</b-button
+            <router-link to="/voucher">
+              <b-button :disabled="isDisable" class="btn-details-set btn-cancel"
+                >ย้อนกลับ</b-button
+              ></router-link
             >
           </b-col>
           <b-col md="6" class="text-sm-right">
@@ -442,15 +467,6 @@
       </div>
       <ModalAlert ref="modalAlert" :text="modalMessage" />
       <ModalAlertError ref="modalAlertError" :text="modalMessage" />
-      <ModalAlertConfirm
-        msg="ยืนยันการลบ ?"
-        :text="modalMessage"
-        btnConfirm="ลบ"
-        colorBtnConfirm="danger"
-        btnCancel="ยกเลิก"
-        ref="isModalAlertConfirm"
-        @confirm="btnDelete"
-      />
       <ModalLoading ref="modalLoading" :hasClose="false" />
     </b-container>
   </div>
@@ -465,7 +481,6 @@ import Vue from "vue";
 import TextEditor from "@/components/inputs/TextEditor";
 import ModalAlert from "@/components/modal/alert/ModalAlert";
 import ModalAlertError from "@/components/modal/alert/ModalAlertError";
-import ModalAlertConfirm from "@/components/modal/alert/ModalAlertConfirm";
 import * as moment from "moment/moment";
 import ModalLoading from "@/components/modal/alert/ModalLoading";
 
@@ -478,7 +493,6 @@ export default {
     TextEditor,
     ModalAlert,
     ModalAlertError,
-    ModalAlertConfirm,
     ModalLoading,
   },
   data() {
@@ -505,6 +519,7 @@ export default {
   created: async function () {
     this.$isLoading = true;
     await this.getDatas();
+    await this.changeLanguage(1, 0);
   },
   validations: {
     form: {
@@ -544,6 +559,9 @@ export default {
     onChangeVoucherType(val) {
       this.form.bathOrPercent = val;
     },
+    onChangeVoucherTypeUse(val) {
+      this.form.isOneTimeUsed = val;
+    },
     changeSameLang: function (value) {
       this.form.isSameLanguage = value;
     },
@@ -571,7 +589,6 @@ export default {
       );
       if (languages.result == 1) {
         this.languageList = languages.detail;
-        this.changeLanguage(1, 0);
       }
       let data = await this.$callApi(
         "get",
@@ -584,12 +601,26 @@ export default {
       if (data.result == 1) {
         this.form = data.detail;
 
+        if (this.form.isSameLanguage) {
+          this.imageLogoLang = "";
+          this.languageActive = this.form.mainLanguageId;
+        } else {
+          var index = this.languageList
+            .map(function (x) {
+              return x.id;
+            })
+            .indexOf(this.form.mainLanguageId);
+          this.imageLogoLang = this.languageList[index].imageUrl;
+        }
+
         this.$isLoading = true;
       }
     },
     changeLanguage(id, index) {
-      this.languageActive = id;
-      this.imageLogoLang = this.languageList[index].imageUrl;
+      if (!this.form.isSameLanguage) {
+        this.languageActive = id;
+        this.imageLogoLang = this.languageList[index].imageUrl;
+      }
     },
     onImageChange(img) {
       this.isLoadingImage = true;
@@ -708,10 +739,15 @@ export default {
         this.$refs.modalAlert.show();
 
         if (this.flag == 1) {
-          setTimeout(function () {
-            window.location.href = "/voucher";
+          setTimeout(() => {
+            this.$router.push({
+              path: `/voucher`,
+            });
           }, 3000);
         } else {
+          setTimeout(() => {
+            this.$refs.modalAlert.hide();
+          }, 3000);
           if (this.id > 0) {
             this.getDatas();
           } else {
@@ -724,30 +760,6 @@ export default {
       } else {
         this.$refs.modalAlertError.show();
       }
-    },
-    btnDelete: async function () {
-      this.$refs.isModalAlertConfirm.hide();
-
-      let resData = await this.$callApi(
-        "delete",
-        `${this.$baseUrl}/api/news/delete/${this.id}`,
-        null,
-        this.$headers,
-        null
-      );
-      this.modalMessage = resData.message;
-      if (resData.result == 1) {
-        this.$refs.modalAlert.show();
-        setTimeout(function () {
-          window.location.href = "/news";
-        }, 3000);
-      } else {
-        this.$refs.modalAlertError.show();
-      }
-    },
-    openModalDelete(name) {
-      this.modalMessage = "คุณต้องการลบ " + name + " ใช่หรือไม่?";
-      this.$refs.isModalAlertConfirm.show();
     },
     useSameLanguage: async function () {
       Vue.nextTick(() => {
@@ -818,21 +830,6 @@ export default {
           }
         }
       });
-    },
-    deleteData: async function () {
-      if (confirm("Are you sure you want to delete this data?") == true) {
-        let data = await this.$callApi(
-          "delete",
-          `${this.$baseUrl}/api/banner/remove/${this.id}`,
-          null,
-          this.$headers,
-          null
-        );
-
-        if (data.result == 1) {
-          window.location.href = "/banner";
-        }
-      }
     },
   },
 };

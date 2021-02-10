@@ -2,11 +2,11 @@
   <div>
     <div class="min-vh-100">
       <CRow class="no-gutters px-3 px-sm-0">
-        <b-col sm="6" class="text-center text-sm-left mb-3 mb-sm-0">
+        <b-col xl="4" class="text-center text-sm-left mb-3 mb-sm-0">
           <h1 class="mr-sm-4 header-main text-uppercase">จัดการรูปหมวดหมู่</h1>
         </b-col>
-        <b-col sm="6" class="text-right">
-          <div class="d-flex">
+        <b-col xl="8" class="text-right">
+          <div class="d-flex justify-content-end">
             <b-input-group class="panel-input-serach">
               <b-form-input
                 class="input-serach"
@@ -249,6 +249,7 @@ export default {
   methods: {
     changeImg(data) {
       this.img = data.imageUrl;
+      this.imgName = data.imageUrl;
       this.catId = data.id;
       this.$refs.changeImgModal.show();
     },

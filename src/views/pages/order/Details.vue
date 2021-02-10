@@ -39,8 +39,12 @@
                   <b-col md="3" class="font-weight-bold">ชื่อ :</b-col>
                   <b-col class="mb-2 mb-sm-0" md="9"
                     >{{ form.order.firstname }} {{ form.order.lastname }}
-                    <a href="#" class="f-14 ml-3 text-blue text-underline"
-                      >ดูรายละเอียด</a
+                    <router-link
+                      :to="'/affiliate/details/' + form.order.userGUID"
+                    >
+                      <span class="f-14 text-blue ml-3 text-underline"
+                        >ดูรายละเอียด</span
+                      ></router-link
                     >
                   </b-col>
 
@@ -81,9 +85,13 @@
                     >
                   </b-form-select>
                 </div>
-                <!-- <a href="#" class="f-14 text-blue text-underline"
-                  >ตรวจสอบการชำระเงิน</a
-                > -->
+
+                <div
+                  v-if="form.order.isResendOrder"
+                  class="f-14 d-inline-block"
+                >
+                  จัดส่งใหม่แล้ว
+                </div>
               </b-col>
             </b-row>
 
@@ -111,6 +119,9 @@
                     </p>
                     <p>
                       {{ form.order.shippingAddress.address }}
+                      {{ form.order.shippingAddress.building }}
+                      {{ form.order.shippingAddress.alley }}
+                      {{ form.order.shippingAddress.road }}
                       {{ form.order.shippingAddress.subDistrict }}
                       {{ form.order.shippingAddress.district }}
                       {{ form.order.shippingAddress.province }}
@@ -144,6 +155,9 @@
                     </p>
                     <p>
                       {{ form.order.billingAddress.address }}
+                      {{ form.order.billingAddress.building }}
+                      {{ form.order.billingAddress.alley }}
+                      {{ form.order.billingAddress.road }}
                       {{ form.order.billingAddress.subDistrict }}
                       {{ form.order.billingAddress.district }}
                       {{ form.order.billingAddress.province }}
@@ -156,6 +170,26 @@
                 </div>
               </b-col>
             </b-row>
+
+            <div class="mt-2">
+              <b-button v-b-toggle.collapse-tracking class="collapse-btn">
+                ข้อมูลการจัดส่ง
+                <font-awesome-icon
+                  icon="chevron-right"
+                  class="icon float-right mt-1"
+                />
+                <font-awesome-icon
+                  icon="chevron-down"
+                  class="icon float-right mt-1"
+                />
+              </b-button>
+              <b-collapse id="collapse-tracking" visible>
+                <TrackingTimeline
+                  :trackingNo="form.order.trackingNoShippingJung"
+                  :shippingTypeName="form.order.shippingTypeName"
+                />
+              </b-collapse>
+            </div>
 
             <div class="w-100 mt-3 bg-white">
               <b-table
@@ -175,7 +209,7 @@
                     class="square-box b-contain"
                     v-bind:style="{
                       'background-image':
-                        'url(' + data.item.productImageUrl + ')',
+                        'url(' + data.item.productImageUrl + ')'
                     }"
                   ></div>
                 </template>
@@ -185,6 +219,7 @@
                   <div class="d-flex">
                     <div
                       v-for="(item, index) in data.item.attribute"
+                      :key="index"
                       class="config-tag mr-1 mt-1"
                     >
                       {{ item.label }} : {{ item.option.label }}
@@ -196,6 +231,9 @@
                       {{ data.item.promocodeName }}
                     </span>
                   </p> -->
+                </template>
+                <template v-slot:cell(gp)="data">
+                  <p class="m-0">{{ data.item.gp }}%</p>
                 </template>
                 <template v-slot:cell(subtotal)="data">
                   <p class="m-0">
@@ -218,60 +256,41 @@
                 <b-col sm="6" offset-md="6">
                   <div class="bg-yellow p-3">
                     <b-row class="pb-2">
-                      <b-col cols="7">รวม</b-col>
+                      <b-col cols="7">ยอดรวม (รวม VAT)</b-col>
                       <b-col cols="5" class="text-right"
                         >฿ {{ form.order.subtotal | numeral("0,0.00") }}</b-col
                       >
                     </b-row>
+
+                    <hr />
+
                     <b-row class="pb-2">
-                      <b-col cols="7">ส่วนลด</b-col>
-                      <b-col cols="5" class="text-right"
-                        >- ฿
-                        {{ form.order.discount | numeral("0,0.00") }}</b-col
-                      >
-                    </b-row>
-                    <!-- <b-row class="pb-2">
-                      <b-col cols="7">คอมมิสชั่นตัวแทน</b-col>
-                      <b-col cols="5" class="text-right"
-                        >฿ {{ 0 | numeral("0,0.00") }}</b-col
-                      >
-                    </b-row> -->
-                    <b-row class="pb-2">
-                      <b-col cols="7">ค่าธรรมเนียม GetFin</b-col>
+                      <b-col cols="7">ราคาทุน</b-col>
                       <b-col cols="5" class="text-right"
                         >฿
                         {{
-                          (form.order.getfinFee) | numeral("0,0.00")
+                          form.order.totalWithoutGetFinFee | numeral("0,0.00")
                         }}</b-col
                       >
                     </b-row>
+
                     <b-row class="pb-2">
-                      <b-col cols="7">ค่าธรรมเนียม Omise</b-col>
+                      <b-col cols="7">ค่าธรรมเนียมบริการต่างๆ</b-col>
                       <b-col cols="5" class="text-right"
-                        >฿ {{ (form.order.omiseVat + form.order.omiseCharge) | numeral("0,0.00") }}</b-col
+                        >฿ {{ form.order.getfinFee | numeral("0,0.00") }}</b-col
                       >
                     </b-row>
-                    <b-row class="pb-2 f-14">
-                      <b-col cols="7" class="pl-4">ค่าธรรมเนียม Omise</b-col>
-                      <b-col cols="5" class="text-right"
-                        >฿ {{ form.order.omiseCharge | numeral("0,0.00") }}</b-col
-                      >
-                    </b-row>
-                    <b-row class="pb-2 f-14">
-                      <b-col cols="7" class="pl-4"
-                        >ค่าธรรมเนียมรับชำระเงิน (3.65%)</b-col
-                      >
-                      <b-col cols="5" class="text-right"
-                        >฿ {{ form.order.omiseVat | numeral("0,0.00") }}</b-col
-                      >
-                    </b-row>
+
+                    <hr />
+
                     <b-row class="pb-2">
-                      <b-col cols="7">ค่าขนส่ง</b-col>
+                      <b-col cols="7">ค่าจัดส่ง</b-col>
                       <b-col cols="5" class="text-right"
                         >฿
                         {{ form.order.shippingCost | numeral("0,0.00") }}</b-col
                       >
                     </b-row>
+
                     <b-row class="pb-2">
                       <b-col cols="7" class="font-weight-bold">รวมสุทธิ</b-col>
                       <b-col cols="5" class="text-right font-weight-bold"
@@ -344,6 +363,7 @@ import HeaderLine from "@/components/HeaderLine";
 import ModalAlert from "@/components/modal/alert/ModalAlert";
 import ModalAlertError from "@/components/modal/alert/ModalAlertError";
 import ModalLoading from "@/components/modal/alert/ModalLoading";
+import TrackingTimeline from "@/views/pages/order/component/TrackingTimeline";
 
 export default {
   name: "OrderDetails",
@@ -352,6 +372,7 @@ export default {
     ModalAlert,
     ModalAlertError,
     ModalLoading,
+    TrackingTimeline
   },
   data() {
     return {
@@ -371,66 +392,76 @@ export default {
         {
           key: "createdTime",
           label: "วันที่ทำรายการ",
-          class: "w-100px",
+          class: "w-100px"
         },
         {
           key: "orderSatusName",
           label: "สถานะ",
-          class: "w-100px",
+          class: "w-100px"
         },
         {
           key: "updatedByName",
           label: "ทำรายการโดย",
-          class: "w-100px",
-        },
+          class: "w-100px"
+        }
       ],
       fieldsOrder: [
         {
           key: "id",
-          label: "#",
+          label: "#"
         },
         {
           key: "sku",
           label: "SKU",
-          class: "w-100px",
+          class: "w-100px"
         },
         {
           key: "productImageUrl",
           label: "ภาพประกอบ",
-          class: "w-100px",
+          class: "w-100px"
         },
         {
           key: "productName",
           label: `รายละเอียด`,
           tdClass: "text-left w-200",
-          thclass: "w-200",
+          thclass: "w-200"
+        },
+        {
+          key: "gp",
+          label: `GP`,
+          class: "w-100px"
         },
         {
           key: "orderItemQuantity",
-          label: `จำนวน`,
+          label: `จำนวน`
         },
         {
           key: "subtotal",
           label: `ราคา`,
-          class: "w-100px",
+          class: "w-100px"
+        },
+        {
+          key: "discount",
+          label: `ส่วนลด`,
+          class: "w-100px"
         },
         {
           key: "grandTotal",
           label: `รวม`,
-          class: "w-100px",
-        },
-      ],
+          class: "w-100px"
+        }
+      ]
     };
   },
-  created: async function () {
+  created: async function() {
     await this.getData();
     await this.checkStatus();
   },
   methods: {
-    moment: function () {
+    moment: function() {
       return moment();
     },
-    checkStatus: function (evt) {
+    checkStatus: function(evt) {
       var status = this.form.order.orderStatusId;
       if (status == 9 || status == 6 || status == 7 || status == 5) {
         this.status = true;
@@ -438,7 +469,7 @@ export default {
         this.status = false;
       }
     },
-    getData: async function () {
+    getData: async function() {
       this.isLoadingData = true;
 
       let status = await this.$callApi(
@@ -450,6 +481,7 @@ export default {
       );
       if (status.result == 1) {
         this.statusList = status.detail;
+        this.statusList.shift();
       }
 
       let data = await this.$callApi(
@@ -469,16 +501,16 @@ export default {
         this.$isLoading = true;
       }
     },
-    printShippingLabel: async function () {
+    printShippingLabel: async function() {
       this.$refs.modalLoading.show();
 
       axios({
-        url: `${this.$baseUrl}/api/Transaction/ShippingAddress/${this.id}`,
+        url: `http://s.boxme.asia/api/v1/orders/awb-label/YTMwYmY5NDYtYzdhNi00Njk0LTg3YzgtNDQwZmQ4YjAwZDc1`,
         method: "get",
         headers: this.$headers,
-        responseType: "blob",
+        responseType: "blob"
       })
-        .then((response) => {
+        .then(response => {
           this.$refs.modalLoading.hide();
           var fileURL = window.URL.createObjectURL(new Blob([response.data]));
           var fileLink = document.createElement("a");
@@ -494,7 +526,7 @@ export default {
           document.body.appendChild(fileLink);
           fileLink.click();
         })
-        .catch((error) => {
+        .catch(error => {
           if (error.response.status === 500) {
             // this.imgModal = "/img/icon-unsuccess.png";
             // this.msgModal =
@@ -503,14 +535,14 @@ export default {
           }
         });
     },
-    onChangeStatus: async function (value) {
+    onChangeStatus: async function(value) {
       this.isDisable = true;
       this.$refs.modalLoading.show();
 
       let body = {
         transactionId: this.id,
         note: "",
-        statusId: value,
+        statusId: value
       };
 
       let data = await this.$callApi(
@@ -527,13 +559,16 @@ export default {
 
       if (data.result == 1) {
         this.$refs.modalAlert.show();
+        setTimeout(() => {
+          this.$refs.modalAlert.hide();
+        }, 3000);
         this.getData();
         this.checkStatus();
       } else {
         this.$refs.modalAlertError.show();
       }
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -630,6 +665,7 @@ export default {
   color: white;
   border-radius: 15px;
   font-size: 12px;
+  white-space: nowrap;
 }
 
 @media (max-width: 992px) {

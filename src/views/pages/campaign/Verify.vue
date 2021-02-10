@@ -2,13 +2,13 @@
   <div>
     <div class="min-vh-100">
       <CRow class="no-gutters px-3 px-sm-0">
-        <b-col sm="4" class="text-center text-sm-left mb-3 mb-sm-0">
+        <b-col xl="4" class="text-center text-sm-left mb-3 mb-sm-0">
           <h1 class="mr-sm-4 header-main text-uppercase">
             รายการรอการตรวจสอบแคมเปญ
           </h1>
         </b-col>
-        <b-col sm="8" class="text-right">
-          <div class="d-flex">
+        <b-col xl="8" class="text-right">
+          <div class="d-flex justify-content-end">
             <b-input-group class="panel-input-serach">
               <b-form-input
                 class="input-serach"

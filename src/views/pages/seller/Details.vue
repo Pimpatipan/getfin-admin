@@ -31,7 +31,7 @@
                 <div
                   class="profile-img mb-1"
                   v-bind:style="{
-                    'background-image': 'url(' + form.user.seller.logo + ')',
+                    'background-image': 'url(' + form.user.seller.logo + ')'
                   }"
                 ></div>
                 <span
@@ -43,67 +43,55 @@
                   v-else-if="form.user.seller.statusId == 1"
                   class="seller-status status-yellow"
                 >
-                  รอการอนุมัติ
+                  รอการตรวจสอบ
                 </span>
                 <span
                   v-else-if="form.user.seller.statusId == 2"
                   class="seller-status status-green"
                 >
-                  อนุมัติ
+                  ตรวจสอบแล้ว
                 </span>
-                <span v-else class="seller-status status-red">ถูกระงับ</span>
+                <span v-else class="seller-status status-red">ระงับ</span>
               </b-col>
               <b-col md="5" class="my-auto">
                 <b-row class="my-2">
-                  <b-col md="4" class="font-weight-bold one-line"
-                    >ชื่อร้าน :</b-col
-                  >
-                  <b-col class="mb-2 mb-sm-0 one-line" md="8">
+                  <b-col md="4" class="font-weight-bold">ชื่อร้าน :</b-col>
+                  <b-col class="mb-2 mb-sm-0 two-line breakword" md="8">
                     {{ form.user.displayNameTranslation[0].name }}
                   </b-col>
                 </b-row>
 
                 <b-row class="my-2">
-                  <b-col md="4" class="font-weight-bold one-line"
-                    >ชื่อ-สกุล :</b-col
-                  >
-                  <b-col class="mb-2 mb-sm-0 one-line" md="8"
+                  <b-col md="4" class="font-weight-bold">ชื่อ-สกุล :</b-col>
+                  <b-col class="mb-2 mb-sm-0 two-line breakword" md="8"
                     >{{ form.user.firstname }} {{ form.user.lastname }}</b-col
                   >
                 </b-row>
 
                 <b-row class="my-2">
-                  <b-col md="4" class="font-weight-bold one-line"
-                    >เบอร์โทรศัพท์ :</b-col
-                  >
-                  <b-col class="mb-2 mb-sm-0 one-line" md="8">
+                  <b-col md="4" class="font-weight-bold">เบอร์โทรศัพท์ :</b-col>
+                  <b-col class="mb-2 mb-sm-0 two-line breakword" md="8">
                     {{ form.user.telephone }}
                   </b-col>
                 </b-row>
               </b-col>
               <b-col md="5" class="my-auto">
                 <b-row class="my-2">
-                  <b-col md="4" class="font-weight-bold one-line"
-                    >อีเมล :</b-col
-                  >
-                  <b-col class="mb-2 mb-sm-0" md="8"
+                  <b-col md="4" class="font-weight-bold">อีเมล :</b-col>
+                  <b-col class="mb-2 mb-sm-0 two-line breakword" md="8"
                     ><span class="one-line">{{ form.user.email }}</span></b-col
                   >
                 </b-row>
                 <b-row class="my-2">
-                  <b-col md="4" class="font-weight-bold one-line"
-                    >เลขที่บัญชี :</b-col
-                  >
-                  <b-col class="mb-2 mb-sm-0" md="8">
+                  <b-col md="4" class="font-weight-bold">เลขที่บัญชี :</b-col>
+                  <b-col class="mb-2 mb-sm-0 two-line breakword" md="8">
                     {{ form.bankAccount.accountNo }}
                   </b-col>
                 </b-row>
 
                 <b-row class="my-2">
-                  <b-col md="4" class="font-weight-bold one-line"
-                    >ธนาคาร :</b-col
-                  >
-                  <b-col class="mb-2 mb-sm-0 one-line" md="8">
+                  <b-col md="4" class="font-weight-bold">ธนาคาร :</b-col>
+                  <b-col class="mb-2 mb-sm-0 two-line breakword" md="8">
                     {{ form.bankAccount.bankName }}
                   </b-col>
                 </b-row>
@@ -144,7 +132,7 @@
             <div class="bg-yellow p-3 br-10 mb-2 income-details-box">
               <b-row>
                 <b-col class="my-auto">
-                  <p class="font-weight-bold m-0 one-line">รายได้เดือนล่าสุด</p>
+                  <p class="font-weight-bold m-0 one-line">รายได้สะสม</p>
                 </b-col>
                 <b-col
                   class="my-auto f-16 font-weight-bold text-primary text-right"
@@ -163,7 +151,7 @@
         <div class="text-right my-1 confirm-box mx-3 mx-md-0">
           <b-button
             @click="approveSeller()"
-            class="btn btn-main btn-details-set"
+            class="btn btn-main btn-details-set approve-btn"
             :disabled="isApproveOrRejectAll"
             >ยืนยันการตรวจสอบ</b-button
           >
@@ -181,9 +169,9 @@
                     class="ml-1 text-success"
                     v-if="
                       warningLogIcon[0].result &&
-                      warningLogIcon[1].result &&
-                      warningLogIcon[2].result &&
-                      warningLogIcon[3].result
+                        warningLogIcon[1].result &&
+                        warningLogIcon[2].result &&
+                        warningLogIcon[3].result
                     "
                   />
                   <font-awesome-icon
@@ -197,7 +185,7 @@
                   <b-tabs class="profile-general-tabs">
                     <b-tab active>
                       <template v-slot:title>
-                        <span>ข้อมูลคู่ค้า</span>
+                        <span>ข้อมูลพาร์ทเนอร์</span>
                         <font-awesome-icon
                           icon="check-circle"
                           title="View"
@@ -220,7 +208,7 @@
                     </b-tab>
                     <b-tab>
                       <template v-slot:title>
-                        <span>ข้อมูลเกี่ยวกับธุรกิจ</span>
+                        <span>ข้อมูลธุรกิจ</span>
                         <font-awesome-icon
                           icon="check-circle"
                           title="View"
@@ -243,7 +231,7 @@
                     </b-tab>
                     <b-tab>
                       <template v-slot:title>
-                        <span>บัญชีรับเงิน</span>
+                        <span>บัญชีธนาคาร</span>
                         <font-awesome-icon
                           icon="check-circle"
                           title="View"
@@ -293,7 +281,7 @@
               </b-tab>
               <b-tab class="">
                 <template v-slot:title>
-                  <span>โลโก้ร้านค้า</span>
+                  <span>รูปพาร์ทเนอร์</span>
                   <font-awesome-icon
                     icon="times-circle"
                     title="View"
@@ -318,7 +306,7 @@
               </b-tab>
               <b-tab class="">
                 <template v-slot:title>
-                  <span>ขนส่ง</span>
+                  <span>การจัดส่ง</span>
                   <font-awesome-icon
                     icon="times-circle"
                     title="View"
@@ -342,7 +330,7 @@
               </b-tab>
               <b-tab class="">
                 <template v-slot:title>
-                  <span>เลขที่ใบแจ้งหนี้</span>
+                  <span>เลขที่คำสั่งซื้อ</span>
                   <font-awesome-icon
                     icon="times-circle"
                     title="View"
@@ -403,7 +391,7 @@
                                 class="square-box"
                                 v-bind:style="{
                                   'background-image':
-                                    'url(' + data.item.imageUrl + ')',
+                                    'url(' + data.item.imageUrl + ')'
                                 }"
                               ></div>
                             </div>
@@ -457,7 +445,7 @@
                             <a
                               :href="
                                 'http://dev-getfin.dosetech.co/product/' +
-                                data.item.urlKey
+                                  data.item.urlKey
                               "
                               target="_blank"
                               class="text-primary"
@@ -465,13 +453,13 @@
                               ตรวจสอบ
                             </a>
                             <!-- <a
-                    :href="
-                      'http://getfin.dosetech.co/product/' + data.item.urlKey
-                    "
-                    target="_blank"
-                    class="text-primary"
-                    >ตรวจสอบ</a
-                  > -->
+                              :href="
+                                'http://getfin.me/product/' + data.item.urlKey
+                              "
+                              target="_blank"
+                              class="text-primary"
+                              >ตรวจสอบ</a
+                            > -->
                           </template>
                           <template v-slot:table-busy>
                             <div class="text-center text-black my-2">
@@ -713,7 +701,7 @@ export default {
     Sellerlogo,
     Shipping,
     Invoice,
-    ModalLoading,
+    ModalLoading
   },
   data() {
     return {
@@ -734,23 +722,23 @@ export default {
       answer: "",
       options: [
         { value: 1, text: "เก่าสุด - ใหม่สุด" },
-        { value: 2, text: "ใหม่สุด - เก่าสุด" },
+        { value: 2, text: "ใหม่สุด - เก่าสุด" }
       ],
       modalMessage: "",
       activeItem: "",
       requestDeleteUser: {
-        userId: null,
+        userId: null
       },
       fields: [
         {
           key: "imageUrl",
           label: "ภาพประกอบ",
-          class: "w-100px text-nowrap",
+          class: "w-100px text-nowrap"
         },
         {
           key: "name",
           label: "รายละเอียดสินค้า",
-          class: "w-100px text-nowrap",
+          class: "w-100px text-nowrap"
         },
         { key: "sku", label: "SKU", class: "w-100px text-nowrap" },
         { key: "price", label: "ราคา", class: "w-100px text-nowrap" },
@@ -758,61 +746,61 @@ export default {
         { key: "display", label: "แสดงผล", class: "text-nowrap" },
         { key: "enabled", label: "สถานะ", class: "w-100px text-nowrap" },
         { key: "displays", label: "ปิด/เปิด", class: "text-nowrap" },
-        { key: "id", label: "", class: "w-100px text-nowrap" },
+        { key: "id", label: "", class: "w-100px text-nowrap" }
       ],
       fieldsLog: [
         {
           key: "createdTime",
           label: "วันที่ทำรายการ",
-          class: "w-100px",
+          class: "w-100px"
         },
         {
           key: "statusId",
           label: "สถานะ",
-          class: "w-100px",
+          class: "w-100px"
         },
         {
           key: "createdByName",
           label: "ทำรายการโดย",
-          class: "w-100px",
-        },
+          class: "w-100px"
+        }
       ],
       WarningLog: [
         {
           TypeLogId: 1,
           Note: "",
-          Result: false,
+          Result: false
         },
         {
           TypeLogId: 2,
           Note: "",
-          Result: false,
+          Result: false
         },
         {
           TypeLogId: 3,
           Note: "",
-          Result: false,
+          Result: false
         },
         {
           TypeLogId: 4,
           Note: "",
-          Result: false,
+          Result: false
         },
         {
           TypeLogId: 5,
           Note: "",
-          Result: true,
+          Result: true
         },
         {
           TypeLogId: 6,
           Note: "",
-          Result: false,
+          Result: false
         },
         {
           TypeLogId: 7,
           Note: "",
-          Result: false,
-        },
+          Result: false
+        }
       ],
       hasReject: [
         { reject: false },
@@ -821,7 +809,16 @@ export default {
         { reject: false },
         { reject: false },
         { reject: false },
-        { reject: false },
+        { reject: false }
+      ],
+      tabsName: [
+        "ข้อมูลพาร์ทเนอร์",
+        "ข้อมูลธุรกิจ",
+        "บัญชีธนาคาร",
+        "ที่อยู่คลังสินค้า",
+        "รูปพาร์ทเนอร์",
+        "การจัดส่ง",
+        "เลขที่คำสั่งซื้อ"
       ],
       form: null,
       indexTab: 0,
@@ -833,42 +830,44 @@ export default {
         PerPage: 10,
         Search: "",
         Status: [],
-        SortByOrderOrId: 1,
+        SortByOrderOrId: 1
       },
       pageOptions: [
         { value: 10, text: "10 / หน้า" },
         { value: 30, text: "30 / หน้า" },
         { value: 50, text: "50 / หน้า" },
-        { value: 100, text: "100 / หน้า" },
+        { value: 100, text: "100 / หน้า" }
       ],
       totalRowMessage: "",
-      errorReject: false,
+      errorReject: false
     };
   },
-  created: async function () {
+  created: async function() {
     await this.getList();
     await this.getProductList();
     await this.getWarningLog();
     await this.getWarningLogIcon();
-    this.date = moment().subtract(1, "months").format("MMMM YYYY");
+    this.date = moment()
+      .subtract(1, "months")
+      .format("MMMM YYYY");
   },
   methods: {
-    moment: function () {
+    moment: function() {
       return moment();
     },
     comma(array) {
       let str = "";
       for (let i = 0; i < array.length; i++) {
-        if (array[i].note != null && array[i].note != "")
-          str += array[i].note + ", ";
+        if (!array[i].result)
+          str += this.tabsName[array[i].typeLogId - 1] + ", ";
         //else str += "-";
       }
       str = str.replace(/,\s*$/, "");
       return str;
     },
-    getList: async function () {
+    getList: async function() {
       let body = {
-        id: this.$route.params.id,
+        id: this.$route.params.id
       };
 
       let resData = await this.$callApi(
@@ -883,7 +882,7 @@ export default {
         this.$isLoading = true;
       }
     },
-    getWarningLog: async function () {
+    getWarningLog: async function() {
       let resData = await this.$callApi(
         "get",
         `${this.$baseUrl}/api/WarningLog/seller/` + this.form.userId,
@@ -897,7 +896,7 @@ export default {
         else this.itemsLog = [];
       }
     },
-    getWarningLogIcon: async function () {
+    getWarningLogIcon: async function() {
       let resData = await this.$callApi(
         "get",
         `${this.$baseUrl}/api/WarningLog/reject/seller/` + this.form.userId,
@@ -909,7 +908,7 @@ export default {
         this.warningLogIcon = resData.detail.warningProfile;
       }
     },
-    getProductList: async function () {
+    getProductList: async function() {
       this.isBusy = true;
 
       let resData = await this.$callApi(
@@ -934,10 +933,10 @@ export default {
       this.filter.PerPage = value;
       this.getProductList();
     },
-    onChangeEnableSeller: async function (value) {
+    onChangeEnableSeller: async function(value) {
       let body = {
         Enabled: value,
-        SellerId: this.id,
+        SellerId: this.id
       };
 
       let resData = await this.$callApi(
@@ -965,12 +964,12 @@ export default {
         this.disableProduct(1);
       }
     },
-    disableProduct: async function (status) {
+    disableProduct: async function(status) {
       let body = {
         IsActive: status,
         Note: this.answer,
         ProductId: this.productId,
-        SellerId: this.id,
+        SellerId: this.id
       };
 
       let resData = await this.$callApi(
@@ -986,22 +985,22 @@ export default {
         this.getProductList();
       }
     },
-    approveSeller: async function () {
+    approveSeller: async function() {
       this.$refs.modalLoading.show();
 
-      var status = 0;
+      var status = 2;
 
       for (var i = 0; i < this.WarningLog.length; i++) {
-        if (this.WarningLog[i].Result) status = 2;
-        else status = 3;
-
         this.WarningLog[i].Result = this.warningLogIcon[i].result;
+
+        if (!this.WarningLog[i].Result) { status = 3; break;} 
+        //else status = 2;
       }
 
       let body = {
         StatusId: status,
         SellerId: this.id,
-        WarningLog: this.WarningLog,
+        WarningLog: this.WarningLog
       };
 
       let resData = await this.$callApi(
@@ -1016,14 +1015,21 @@ export default {
         this.isApproveOrRejectAll = true;
         this.$refs.modalLoading.hide();
         this.$refs.modalAlert.show();
-        setTimeout(function () {
-          location.reload();
+        await this.getList();
+        await this.getProductList();
+        await this.getWarningLog();
+        await this.getWarningLogIcon();
+        // this.date = moment()
+        //   .subtract(1, "months")
+        //   .format("MMMM YYYY");
+        setTimeout(() => {
+          this.$refs.modalAlert.hide();
         }, 3000);
       } else {
         this.$refs.rejectModal.show();
       }
     },
-    rejectPartner: async function (status) {
+    rejectPartner: async function(status) {
       if (this.rejectNote == "") {
         this.errorReject = true;
         return;
@@ -1033,27 +1039,35 @@ export default {
       this.$refs.rejectModal.hide();
       this.warningLogIcon[this.indexTab].updatedTime = new Date();
       this.warningLogIcon[this.indexTab].warningLog.note = this.rejectNote;
-      this.hasReject[this.indexTab].reject = true;
+      //this.hasReject[this.indexTab].reject = true;
       this.WarningLog[this.indexTab].Result = false;
       this.warningLogIcon[this.indexTab].result = false;
       this.WarningLog[this.indexTab].Note = this.rejectNote;
       this.modalMessage = "สำเร็จ";
       this.$refs.modalAlert.show();
+      setTimeout(() => {
+        this.$refs.modalAlert.hide();
+      }, 3000);
       this.rejectNote = "";
+      this.isApproveOrRejectAll = false;
 
       // for (var i = 0; i < this.WarningLog.length; i++) {
       //   if (!this.WarningLog[i].Result) this.isApproveOrRejectAll = false;
       //   else this.isApproveOrRejectAll = true;
       // }
     },
-    onchangeApproveOrReject: async function (status, index) {
+    onchangeApproveOrReject: async function(status, index) {
       this.indexTab = index;
       if (status) {
         this.WarningLog[index].Result = true;
         this.warningLogIcon[index].result = true;
         this.modalMessage = "สำเร็จ";
         this.$refs.modalAlert.show();
+        setTimeout(() => {
+          this.$refs.modalAlert.hide();
+        }, 3000);
         this.isApproveOrRejectAll = false;
+        this.warningLogIcon[this.indexTab].warningLog.note = "";
         // for (var i = 0; i < this.WarningLog.length; i++) {
         //   if (this.WarningLog[i].Result) this.isApproveOrRejectAll = false;
         //   else  this.isApproveOrRejectAll = true;
@@ -1061,12 +1075,15 @@ export default {
       } else {
         this.$refs.rejectModal.show();
       }
-    },
-  },
+    }
+  }
 };
-</script>       
+</script>
 
 <style scoped>
+.approve-btn {
+  width: 160px !important;
+}
 .menuactive {
   color: #ffb300 !important;
 }
@@ -1108,6 +1125,7 @@ export default {
 .seller-status {
   padding: 0 10px;
   border-radius: 10px;
+  white-space: nowrap;
 }
 
 .status-gray {
@@ -1160,6 +1178,7 @@ export default {
 .confirm-box {
   position: absolute;
   right: 30px;
+  z-index: 9;
 }
 
 @media (max-width: 1600px) {
@@ -1191,6 +1210,16 @@ export default {
   }
 }
 
+@media (max-width: 1200px) {
+  .income-details .income-details-box {
+    width: 100%;
+  }
+
+  .income-details {
+    display: block;
+  }
+}
+
 @media (max-width: 767.98px) {
   .w-300 {
     width: 100%;
@@ -1201,20 +1230,15 @@ export default {
     padding-bottom: 50%;
   }
 
-  .income-details {
-    display: block;
-  }
-
-  .income-details .income-details-box {
-    width: 100%;
-  }
-
   .confirm-box {
     position: unset;
   }
 
   ::v-deep .profile-index-tabs .nav-tabs {
     width: auto;
+  }
+  .approve-btn {
+    width: 100% !important;
   }
 }
 </style>

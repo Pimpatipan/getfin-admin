@@ -6,42 +6,58 @@
           {{ textFloat }}
           <span v-if="isRequired" class="text-danger">*</span>
         </label>
-        <div class="d-flex justify-content-center align-items-center">
-          <div class="w-100 display-only">
-            <input
-              :class="['custom-input']"
-              :type="type"
-              :placeholder="placeholder"
-              :name="name"
-              :required="required"
-              :value="fileName"
-              :size="size"
-              disabled
-            />
-            <font-awesome-icon
-              icon="times-circle"
-              class="text-secondary delete-icon pointer"
-              v-if="fileName"
-              @click="deleteImage"
-            />
+        <div class="d-flex">
+          <div class="w-100 d-flex justify-content-center align-items-center">
+            <div class="w-100 display-only">
+              <input
+                :class="['custom-input']"
+                :type="type"
+                :placeholder="placeholder"
+                :name="name"
+                :required="required"
+                :value="fileNameDisplay"
+                :size="size"
+                disabled
+              />
+              <font-awesome-icon
+                icon="times-circle"
+                class="text-secondary delete-icon pointer"
+                v-if="fileName"
+                @click="deleteImage"
+              />
+            </div>
+            <label class="mb-0 btn-main" :size="size">
+              <input
+                type="file"
+                v-on:change="handleFileChange"
+                :required="required"
+                :name="name"
+                ref="input"
+                @click="clearValue"
+              />
+              <font-awesome-icon
+                icon="file-upload"
+                color="white"
+                class="bg-icon mr-2"
+                :size="size"
+              />เลือกไฟล์
+              <!-- <font-awesome-icon icon="upload" class="arrow-logo" /> -->
+            </label>
           </div>
-          <label class="mb-0 btn-main" :size="size">
-            <input
-              type="file"
-              v-on:change="handleFileChange"
-              :required="required"
-              :name="name"
-              ref="input"
-              @click="clearValue"
-            />
+
+          <b-button
+            type="button"
+            class="btn-download"
+            :disabled="fileName == '' || !fileName"
+            variant="link"
+            @click.prevent="downloadItem(fileName)"
+          >
             <font-awesome-icon
-              icon="file-upload"
+              icon="file-download"
               color="white"
-              class="bg-icon mr-2"
+              class="bg-icon"
               :size="size"
-            />
-            <!-- <font-awesome-icon icon="upload" class="arrow-logo" /> -->
-          </label>
+          /></b-button>
         </div>
       </div>
       <!-- <b-button
@@ -57,6 +73,7 @@
         >
       </div>
       <ModalAlertError ref="modalAlertError" :text="modalMessage" />
+      <ModalLoading ref="modalLoading" :hasClose="false" />
     </div>
   </div>
 </template>
@@ -64,59 +81,61 @@
 <script>
 import axios from "axios";
 import ModalAlertError from "@/components/modal/alert/ModalAlertError";
+import ModalLoading from "@/components/modal/alert/ModalLoading";
 export default {
   components: {
     ModalAlertError,
+    ModalLoading
   },
   props: {
     textFloat: {
       required: true,
-      type: String,
+      type: String
     },
     text: {
       required: true,
-      type: String,
+      type: String
     },
     format: {
       required: true,
-      type: String,
+      type: String
     },
     fileName: {
       required: true,
-      type: String,
+      type: String
     },
     required: {
       required: false,
-      type: Boolean,
+      type: Boolean
     },
     name: {
       required: false,
-      type: String,
+      type: String
     },
     isRequired: {
       required: false,
-      type: Boolean,
+      type: Boolean
     },
     isValidate: {
       required: false,
-      type: Boolean,
+      type: Boolean
     },
     placeholder: {
       required: true,
-      type: String,
+      type: String
     },
     size: {
       required: false,
-      type: String,
+      type: String
     },
     downloadPath: {
       required: false,
-      type: String,
+      type: String
     },
     v: {
       required: false,
-      type: Object,
-    },
+      type: Object
+    }
   },
   data() {
     return {
@@ -131,8 +150,8 @@ export default {
         video: ["video/mp4"],
         excel: [
           "application/vnd.ms-excel",
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        ],
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        ]
       },
       error: "",
       hasError: false,
@@ -142,11 +161,32 @@ export default {
       modalAlertShow: false,
       isSuccess: false,
       modalMessage: "",
+      dataURL: ""
     };
+  },
+  computed: {
+    fileNameDisplay: function() {
+      if (this.fileName != null)
+        return (
+          this.fileName
+            .split("//")
+            .pop()
+            .split("/")[2] || this.fileName
+        );
+      // if (this.fileName) {
+      //   if (this.fileName.includes(this.$baseUrl)) {
+      //     return this.fileName.split("\\").pop().split("/")[4];
+      //   } else {
+      //     return this.fileName;
+      //   }
+      // } else {
+      //   return this.fileName;
+      // }
+    }
   },
   methods: {
     clearValue(e) {
-      e.target.value = ''
+      e.target.value = "";
     },
     handleFileChange(e) {
       this.hasError = false;
@@ -197,31 +237,62 @@ export default {
         this.hasError = true;
       }
     },
-    downloadItem: async function(path) {
-      let pathFile = path;
-      axios({
-        url: pathFile,
-        method: "GET",
-        headers: null,
-        responseType: "blob",
-      }).then(response => {
-        var fileURL = window.URL.createObjectURL(new Blob([response.data]));
-        var fileLink = document.createElement("a");
+    downloadImage: async function(path) {
+      this.$nextTick(() => {
+        var img = new Image();
+        img.src = path;
+        img.crossOrigin = "Anonymous";
 
-        fileLink.href = fileURL;
-        fileLink.setAttribute(
-          "download",
-          `download.${response.data.type.split("/").pop(-1)}`
-        );
-        document.body.appendChild(fileLink);
-        fileLink.click();
+        img.onload = () => {
+          var canvas = document.createElement("canvas");
+          canvas.width = img.width;
+          canvas.height = img.height;
+          var ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0);
+          this.dataURL = canvas.toDataURL();
+
+          var fileLink = document.createElement("a");
+          fileLink.href = this.dataURL;
+          fileLink.setAttribute(
+            "download",
+            `${this.fileName.split("/").pop()}`
+          );
+          document.body.appendChild(fileLink);
+          fileLink.click();
+          this.$refs.modalLoading.hide();
+        };
       });
+    },
+    downloadItem: async function(path) {
+      this.$refs.modalLoading.show();
+      if (path.split(".").pop() == "jpg" || path.split(".").pop() == "png") {
+        await this.downloadImage(path);
+      } else {
+        let pathFile = path;
+        axios({
+          url: pathFile,
+          method: "GET",
+          headers: null,
+          responseType: "blob"
+        }).then(response => {
+          var fileURL = window.URL.createObjectURL(new Blob([response.data]));
+          var fileLink = document.createElement("a");
+
+          fileLink.href = fileURL;
+          fileLink.setAttribute(
+            "download",
+            `download.${response.data.type.split("/").pop(-1)}`
+          );
+          document.body.appendChild(fileLink);
+          fileLink.click();
+        });
+      }
     },
     deleteImage() {
       this.$emit("delete", true);
       this.hasImage = false;
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -301,7 +372,7 @@ input[size="lg"].custom-input {
   border-radius: 10px;
 }
 .btn-main {
-  width: 120px;
+  min-width: 120px;
   text-align: center;
   height: 37px;
   vertical-align: middle;
@@ -318,6 +389,19 @@ input[size="lg"].custom-input {
   position: absolute;
   right: 5%;
   top: 10px;
+}
+.btn-download {
+  width: 50px;
+  text-align: center;
+  height: 37px;
+  vertical-align: middle;
+  cursor: pointer;
+  background: #16274a;
+  color: white;
+  padding: 7px 10px;
+  margin-left: 5px;
+  margin-top: 1px;
+  border-radius: 0;
 }
 @media (max-width: 767.98px) {
   .input-custom > label {

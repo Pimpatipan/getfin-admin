@@ -2,13 +2,13 @@
   <div>
     <div class="min-vh-100">
       <CRow class="no-gutters px-3 px-sm-0">
-        <b-col xl="6"  class="text-center text-lg-left mb-3 mb-sm-0">
+        <b-col xl="6" class="text-center text-lg-left mb-3 mb-sm-0">
           <h1 class="mr-sm-4 header-main text-uppercase">
-            จัดการคำถามที่พบบ่อย
+            จัดการคำถามที่พบบ่อย{{ faqTypeName }}
           </h1>
         </b-col>
-        <b-col xl="6"  class="text-right">
-          <div class="d-flex">
+        <b-col xl="6" class="text-right">
+          <div class="d-flex justify-content-end">
             <b-input-group class="panel-input-serach">
               <b-form-input
                 class="input-serach"
@@ -22,80 +22,27 @@
                 </span>
               </b-input-group-prepend>
             </b-input-group>
-            <router-link to="/faq/details/0">
+            <router-link :to="'/faq' + path + '/details/0'">
               <b-button class="btn-main p-2">สร้างหัวข้อใหม่</b-button>
             </router-link>
-            <b-button
-              v-b-toggle.sidebar-1
-              class="ml-2 btn-filter btn-filter-faq"
-            >
-              <font-awesome-icon
-                icon="filter"
-                title="filter-btn"
-                class="text-white mr-0 mr-sm-1"
-              />
-              <span class="d-none d-sm-inline one-line">ค้นหาแบบละเอียด ({{filter.status.length}})</span>
-            </b-button>
           </div>
         </b-col>
       </CRow>
-      <b-sidebar
-        id="sidebar-1"
-        title="ค้นหาแบบละเอียด"
-        backdrop
-        shadow
-        backdrop-variant="dark"
-        right
-        ref="filterSidebar"
-      >
-        <div class="px-3 py-2">
-          <div class="text-right">
-            <button
-              type="button"
-              class="btn btn-link px-0"
-              @click="onClearFilter()"
+
+      <b-row class="no-gutters px-3 px-sm-0 mt-2 overflow-auto">
+        <b-col class="">
+          <b-button-group class="btn-group-status">
+            <b-button
+              v-for="(item, index) in statusList"
+              :key="index"
+              @click="getDataByStatus(item.name, item.id)"
+              :class="{ menuactive: isActive(item.name) }"
+              >{{ item.name }} ({{ item.count }})</b-button
             >
-              ล้างค่า
-            </button>
-          </div>
+          </b-button-group>
+        </b-col>
+      </b-row>
 
-          <div>
-            <p class="font-weight-bold mb-2 main-label">สถานะ</p>
-          </div>
-
-          <div class="row mb-3" v-if="statusList.length != 0">
-            <div class="col-12">
-              <div
-                v-for="(status, index) in statusList"
-                :key="status.id"
-              >
-                <div class="form-check mb-2">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    :value="status.id"
-                    v-model="filter.status"
-                    :id="'status-' + status.id"
-                  />
-                  <label class="form-check-label" :for="'status-' + status.id"
-                    >{{ status.name }}
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="text-center mt-4">
-            <button
-              type="button"
-              class="btn btn-purple button"
-              @click="getDataByStatus"
-            >
-              ค้นหา
-            </button>
-          </div>
-        </div>
-      </b-sidebar>
       <div class="mt-3 bg-white p-3 p-sm-0">
         <b-row class="no-gutters">
           <b-col>
@@ -132,15 +79,15 @@
 
               <template v-slot:cell(id)="data">
                 <div class="d-flex justify-content-center">
-                  <router-link :to="'/faq/details/' + data.item.id">
-                    <b-button variant="link" class="text-dark px-1 py-0 ">
+                  <router-link :to="'/faq' + path + '/details/' + data.item.id">
+                    <b-button variant="link" class="text-dark px-1 py-0">
                       <!-- <font-awesome-icon icon="pencil-alt" title="แก้ไข" /> -->
                       แก้ไข
                     </b-button>
                   </router-link>
                   <b-button
                     variant="link"
-                    class=" px-1 py-0 text-dark"
+                    class="px-1 py-0 text-dark"
                     @click="openModalDelete(data.item)"
                   >
                     <!-- <font-awesome-icon icon="trash-alt" title="ลบ" /> -->
@@ -179,8 +126,6 @@
                 @change="pagination"
                 align="center"
               ></b-pagination>
-
-         
             </div>
 
             <b-form-select
@@ -221,6 +166,7 @@ export default {
   data() {
     return {
       statusList: [
+        { id: [], name: "ทั้งหมด" },
         {
           id: 0,
           name: "ปิดใช้งาน",
@@ -232,7 +178,6 @@ export default {
       ],
       modalMessage: "",
       activeItem: "",
-
       requestDeleteUser: {
         userId: null,
       },
@@ -270,6 +215,7 @@ export default {
         PerPage: 10,
         Search: "",
         status: [],
+        IsPArtner: false,
       },
       pageOptions: [
         { value: 10, text: "10 / หน้า" },
@@ -278,16 +224,56 @@ export default {
         { value: 100, text: "100 / หน้า" },
       ],
       totalRowMessage: "",
-
       isDisable: false,
+      faqType: this.$route.path,
+      path: "",
+      faqTypeName: "",
+      faqPathFilterName: "",
+      statusQuestion: [],
     };
   },
-  created: async function() {
+  watch: {
+    "$route.path"(value) {
+      this.faqType = value;
+      this.checkType();
+      this.getList();
+      this.activeItem = "ทั้งหมด";
+    },
+  },
+  mounted: async function () {
+    await this.checkType();
     await this.getList();
+    this.activeItem = "ทั้งหมด";
   },
   methods: {
-    getList: async function() {
+    checkType: async function () {
+      if (this.faqType == "/faq/partner") {
+        this.filter.IsPArtner = true;
+        this.path = "/partner";
+        this.faqPathFilterName = "FAQPartnerStatusWithCount";
+        this.faqTypeName = "พาร์ทเนอร์";
+      } else {
+        this.filter.IsPArtner = false;
+        this.path = "";
+        this.faqPathFilterName = "FAQStatusWithCount";
+        this.faqTypeName = "";
+      }
+    },
+    getList: async function () {
       this.isBusy = true;
+
+      let status = await this.$callApi(
+        "get",
+        `${this.$baseUrl}/api/faq/${this.faqPathFilterName}`,
+        null,
+        this.$headers,
+        null
+      );
+
+      if (status.result == 1) {
+        this.statusList = status.detail;
+      }
+
       let resData = await this.$callApi(
         "post",
         `${this.$baseUrl}/api/FAQ/topicList`,
@@ -301,16 +287,20 @@ export default {
         //this.statusList = resData.detail.overviewCount;
 
         this.isBusy = false;
-         this.$isLoading = true;
+        this.$isLoading = true;
       }
     },
-    getDataByStatus(status) {
+    getDataByStatus(value, id) {
       //this.filter.OverView = status;
-      this.activeItem = status;
-      this.$refs.filterSidebar.hide(true);
+      this.activeItem = value;
+      this.filter.status = [];
+      if (id != 0) {
+        if (id == 1) this.filter.status.push(0);
+        else this.filter.status.push(1);
+      }
       this.getList();
     },
-    isActive: function(menuItem) {
+    isActive: function (menuItem) {
       return this.activeItem == menuItem;
     },
     pagination(Page) {
@@ -349,7 +339,7 @@ export default {
       this.$refs.filterSidebar.hide(true);
       this.getList();
     },
-    btnDelete: async function() {
+    btnDelete: async function () {
       this.$refs.ModalAlertConfirm.hide();
       let resData = await this.$callApi(
         "delete",
@@ -361,6 +351,9 @@ export default {
       this.modalMessage = resData.message;
       if (resData.result == 1) {
         this.$refs.modalAlert.show();
+        setTimeout(() => {
+          this.$refs.modalAlert.hide();
+        }, 3000);
         this.filter.Page = 1;
         await this.getList();
       } else {

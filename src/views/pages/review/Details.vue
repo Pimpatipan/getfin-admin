@@ -135,11 +135,10 @@
 
         <b-row class="mt-5">
           <b-col md="6">
-            <b-button
-              href="/review"
-              :disabled="isDisable"
-              class="btn-details-set btn-cancel"
-              >ย้อนกลับ</b-button
+            <router-link to="/review">
+              <b-button :disabled="isDisable" class="btn-details-set btn-cancel"
+                >ย้อนกลับ</b-button
+              ></router-link
             >
           </b-col>
           <b-col md="6" class="text-sm-right">
@@ -318,10 +317,15 @@ export default {
         this.$refs.modalAlert.show();
 
         if (this.flag == 1) {
-          setTimeout(function () {
-            window.location.href = "/review";
+          setTimeout(() => {
+            this.$router.push({
+              path: `/review`,
+            });
           }, 3000);
         } else {
+          setTimeout(() => {
+            this.$refs.modalAlert.hide();
+          }, 3000);
           if (this.id > 0) {
             this.getDatas();
           } else {

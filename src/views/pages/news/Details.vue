@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-container class="container-box">
+    <b-container class="container-box" v-if="$isLoading">
       <b-row class="no-gutters">
         <b-col>
           <h1 class="font-weight-bold header-main text-uppercase mb-3">
@@ -9,7 +9,7 @@
         </b-col>
       </b-row>
 
-      <div class="bg-white p-3" v-if="$isLoading">
+      <div class="bg-white p-3">
         <b-row class="pl-1">
           <b-col cols="6">
             <!-- <div class="panel d-flex align-items-md-center">
@@ -141,7 +141,7 @@
         <b-row v-if="form.news.newsTypeId == 2" class="mb-2">
           <b-col md="6">
             <label class="label-text">
-              วันแสดงผลโปรโมชั่นนี้
+              วันแสดงผลบทความที่น่าสนใจนี้
               <!-- <span class="text-danger">*</span> -->
             </label>
             <datetime
@@ -152,7 +152,7 @@
               v-model="form.news.startDateDisplay"
             ></datetime>
             <p class="text-danger" v-if="error">
-              วันแสดงผลโปรโมชั่นนี้ต้องมาก่อนวันที่หมดเขตของโปรโมชั่นนี้
+              วันแสดงผลบทความที่น่าสนใจนี้ต้องมาก่อนวันที่หมดเขตของบทความที่น่าสนใจนี้
             </p>
             <p
               class="text-danger input-custom error"
@@ -163,7 +163,7 @@
           </b-col>
           <b-col md="6">
             <label class="label-text">
-              วันที่หมดเขตของโปรโมชั่นนี้
+              วันที่หมดเขตของบทความที่น่าสนใจนี้
               <!-- <span class="text-danger">*</span> -->
             </label>
             <datetime
@@ -199,7 +199,7 @@
           </b-col>
           <b-col md="6">
             <div
-              class="preview-box b-contain"
+              class="preview-box b-contain ratio-4-3-pb"
               v-if="coverImgType == 1"
               v-bind:style="{ 'background-image': 'url(' + showPreview + ')' }"
             >
@@ -255,6 +255,7 @@
             </div>
           </b-col>
         </b-row>
+
         <b-row class="mt-4">
           <b-col>
             <InputSelect
@@ -291,6 +292,7 @@
           </b-col>
         </b-row>
       </div>
+
       <div class="bg-white p-3 mt-2" v-if="form.news.newsTypeId == 2">
         <div class="">
           <b-row>
@@ -302,7 +304,7 @@
             </b-col>
           </b-row>
           <b-row class="my-3">
-            <b-col>
+            <b-col xl="6">
               <b-form-checkbox
                 size="lg"
                 class="ml-1 ml-sm-2"
@@ -311,7 +313,7 @@
                 ><label for="" class="">แสดงที่เลือก</label></b-form-checkbox
               >
             </b-col>
-            <b-col sm="6" class="text-right">
+            <b-col xl="6" class="text-right">
               <div class="d-flex">
                 <b-input-group class="panel-article-input-serach">
                   <b-form-input
@@ -327,93 +329,19 @@
                   </b-input-group-prepend>
                 </b-input-group>
 
-                <b-button v-b-toggle.sidebar-1 class="mr-2 btn-filter">
-                  <font-awesome-icon
-                    icon="filter"
-                    title="filter-btn"
-                    class="text-white mr-0 mr-sm-1"
-                  />
-                  <span class="d-none d-sm-inline"
-                    >ค้นหาแบบละเอียด ({{
-                      filter.status.length + countCat
-                    }})</span
-                  >
-                </b-button>
+                <InputSelect
+                  class="w-100 m-0"
+                  title=""
+                  name="Cate"
+                  v-bind:options="catLists"
+                  valueField="id"
+                  textField="name"
+                  v-model="selectedCategoryId"
+                  @onDataChange="handleChangeCategory"
+                />
               </div>
             </b-col>
           </b-row>
-          <b-sidebar
-            id="sidebar-1"
-            title="ค้นหาแบบละเอียด"
-            backdrop
-            shadow
-            backdrop-variant="dark"
-            right
-            ref="filterSidebar"
-          >
-            <div class="px-3 py-2">
-              <div class="text-right">
-                <button
-                  type="button"
-                  class="btn btn-link px-0"
-                  @click="onClearFilter()"
-                >
-                  ล้างค่า
-                </button>
-              </div>
-
-              <div>
-                <p class="font-weight-bold mb-2 main-label">สถานะสินค้า</p>
-              </div>
-              <b-row
-                class=""
-                v-for="(status, index) in statusList"
-                :key="status.id"
-              >
-                <b-col>
-                  <div class="form-check mb-2">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      :value="status.id"
-                      v-model="filter.status"
-                      :id="'status-' + status.id"
-                    />
-                    <label
-                      class="form-check-label"
-                      :for="'status-' + status.id"
-                      >{{ status.name }}</label
-                    >
-                  </div>
-                </b-col>
-              </b-row>
-              <b-row class="mt-2">
-                <b-col>
-                  <InputSelect
-                    class="mb-4"
-                    title="หมวดหมู่"
-                    name="Cate"
-                    v-bind:options="catLists"
-                    valueField="id"
-                    textField="name"
-                    v-model="selectedCategoryId"
-                    @onDataChange="handleChangeCategory"
-                  />
-                </b-col>
-              </b-row>
-              <b-row class="mt-3">
-                <b-col class="d-flex justify-content-center">
-                  <button
-                    type="button"
-                    class="btn btn-purple button"
-                    @click="getDataByStatus"
-                  >
-                    ค้นหา
-                  </button>
-                </b-col>
-              </b-row>
-            </div>
-          </b-sidebar>
           <b-table
             striped
             responsive
@@ -444,11 +372,16 @@
             </template>
             <template v-slot:cell(imageUrl)="data">
               <div
-                class="image"
+                class="square-box b-contain"
                 v-bind:style="{
                   'background-image': 'url(' + data.item.imageUrl + ')',
                 }"
               ></div>
+            </template>
+            <template v-slot:cell(name)="data">
+              <p class="mb-0 nobreak three-lines">
+                {{ data.item.name }}
+              </p>
             </template>
             <template v-slot:cell(price)="data">
               <span> ฿ {{ data.item.price | numeral("0,0.00") }} </span>
@@ -515,11 +448,10 @@
               @click="openModalDelete(form.news.translationList[0].name)"
               >ลบ</b-button
             >
-            <b-button
-              href="/news"
-              :disabled="isDisable"
-              class="btn-details-set btn-cancel"
-              >ย้อนกลับ</b-button
+            <router-link to="/news">
+              <b-button :disabled="isDisable" class="btn-details-set btn-cancel"
+                >ย้อนกลับ</b-button
+              ></router-link
             >
           </b-col>
           <b-col md="6" class="text-sm-right">
@@ -542,7 +474,9 @@
           </b-col>
         </b-row>
       </div>
-      <ModalAlert ref="modalAlert" :text="modalMessage" />
+      
+    </b-container>
+    <ModalAlert ref="modalAlert" :text="modalMessage" />
       <ModalAlertError ref="modalAlertError" :text="modalMessage" />
       <ModalAlertConfirm
         msg="ยืนยันการลบ ?"
@@ -554,7 +488,6 @@
         @confirm="btnDelete"
       />
       <ModalLoading ref="modalLoading" :hasClose="false" />
-    </b-container>
   </div>
 </template>
 
@@ -624,7 +557,7 @@ export default {
         },
         {
           id: 2,
-          name: "โปรโมชั่น",
+          name: "บทความที่น่าสนใจ",
         },
       ],
       rows: 0,
@@ -640,7 +573,7 @@ export default {
         search: "",
         productId: [],
         categoryId: [],
-        status: [],
+        status: [1],
       },
       totalRowMessage: "",
       statusList: [
@@ -659,9 +592,9 @@ export default {
           label: "#",
         },
         {
-          key: "thumbnail",
+          key: "imageUrl",
           label: "ภาพประกอบ",
-          class: "w-200px",
+          class: "w-100px",
         },
         {
           key: "name",
@@ -686,7 +619,6 @@ export default {
         {
           key: "stock",
           label: "คลัง",
-          class: "w-100px",
         },
         {
           key: "display",
@@ -771,7 +703,7 @@ export default {
   computed: {
     countCat: function () {
       var count = 0;
-      if (this.filter.categoryId.length != 0) count += 1;
+      if (this.filter.categoryId.length !== 0) count += 1;
       else if (count > 0) count -= 1;
       return count;
     },
@@ -791,7 +723,7 @@ export default {
       if (this.selected.length != this.allItems.length) {
         if (this.selectedAll) {
           this.selected = [];
-          this.allItems.forEach((element, index) => {
+          this.allItems.forEach((element) => {
             this.selected.push(element.id);
           });
           if (this.displayOnlySelected) this.onClearFilter();
@@ -864,7 +796,6 @@ export default {
       );
       if (languages.result == 1) {
         this.languageList = languages.detail;
-        this.changeLanguage(1, 0);
       }
       let data = await this.$callApi(
         "get",
@@ -910,12 +841,13 @@ export default {
 
       if (this.form.news.isSameLanguage) {
         this.imageLogoLang = "";
+        this.languageActive = this.form.news.mainLanguageId;
       } else {
         var index = this.languageList
           .map(function (x) {
             return x.id;
           })
-          .indexOf(this.languageActive);
+          .indexOf(this.form.news.mainLanguageId);
         this.imageLogoLang = this.languageList[index].imageUrl;
       }
     },
@@ -934,6 +866,7 @@ export default {
       if (value != 0) {
         this.filter.categoryId.push(value);
       }
+      this.getList();
     },
     handleChangeNewsType: async function (value) {
       //this.form.news.newsTypeId = 0;
@@ -981,7 +914,7 @@ export default {
         search: "",
         productId: [],
         categoryId: [],
-        status: [],
+        status: [1],
       };
       let data = await this.$callApi(
         "post",
@@ -996,8 +929,10 @@ export default {
       }
     },
     changeLanguage(id, index) {
-      this.languageActive = id;
-      this.imageLogoLang = this.languageList[index].imageUrl;
+      if (!this.form.news.isSameLanguage) {
+        this.languageActive = id;
+        this.imageLogoLang = this.languageList[index].imageUrl;
+      }
     },
     onImageChange(img) {
       this.isLoadingImage = true;
@@ -1122,10 +1057,15 @@ export default {
         this.$refs.modalAlert.show();
 
         if (this.flag == 1) {
-          setTimeout(function () {
-            window.location.href = "/news";
+          setTimeout(() => {
+            this.$router.push({
+              path: `/news`,
+            });
           }, 3000);
         } else {
+          setTimeout(() => {
+            this.$refs.modalAlert.hide();
+          }, 3000);
           if (this.id > 0) {
             this.getDatas();
           } else {
@@ -1141,6 +1081,7 @@ export default {
     },
     btnDelete: async function () {
       this.$refs.isModalAlertConfirm.hide();
+      this.$refs.modalLoading.show();
 
       let resData = await this.$callApi(
         "delete",
@@ -1149,11 +1090,14 @@ export default {
         this.$headers,
         null
       );
+      this.$refs.modalLoading.hide();
       this.modalMessage = resData.message;
       if (resData.result == 1) {
         this.$refs.modalAlert.show();
-        setTimeout(function () {
-          window.location.href = "/news";
+        setTimeout( ()=> {
+          this.$router.push({
+            path: `/news`,
+          });
         }, 3000);
       } else {
         this.$refs.modalAlertError.show();
@@ -1164,14 +1108,15 @@ export default {
       this.$refs.isModalAlertConfirm.show();
     },
     checkAllSelect() {
-      if (!this.selectAllCb) {
-        this.filter.Status = [];
-      } else {
-        var list = this.statusList.slice(1);
-        for (const item in list) {
-          this.filter.Status.push(list[item].id);
-        }
-      }
+      this.filter.status = [1];
+      // if (!this.selectAllCb) {
+      //   this.filter.Status = [1];
+      // } else {
+      //   var list = this.statusList.slice(1);
+      //   for (const item in list) {
+      //     this.filter.Status.push(list[item].id);
+      //   }
+      // }
     },
     getDataByStatus(status) {
       //this.filter.status = status;
@@ -1265,21 +1210,6 @@ export default {
         }
       });
     },
-    deleteData: async function () {
-      if (confirm("Are you sure you want to delete this data?") == true) {
-        let data = await this.$callApi(
-          "delete",
-          `${this.$baseUrl}/api/banner/remove/${this.id}`,
-          null,
-          this.$headers,
-          null
-        );
-
-        if (data.result == 1) {
-          window.location.href = "/banner";
-        }
-      }
-    },
   },
 };
 </script>
@@ -1312,9 +1242,6 @@ export default {
 }
 .border-product {
   border-top: 10px solid #f8f8f8;
-}
-.b-contain {
-  padding-bottom: 42.9%;
 }
 .banner-video::before {
   padding-top: 42.9%;

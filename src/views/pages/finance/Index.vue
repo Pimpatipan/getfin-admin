@@ -2,18 +2,18 @@
   <div>
     <div class="min-vh-100">
       <CRow class="no-gutters px-3 px-sm-0">
-        <b-col sm="6" class="text-center text-sm-left mb-3 mb-sm-0">
-          <h1 class="mr-sm-4 header-main text-uppercase">
-            รายการเกี่ยวกับการเงิน (คู่ค้า)
+        <b-col xl="4" class="text-center text-sm-left mb-3 mb-sm-0">
+          <h1 class="header-main text-uppercase">
+            รายการเกี่ยวกับการเงินพาร์ทเนอร์
           </h1>
           <!-- <b-button v-b-modal.modal-1>Launch demo modal</b-button> -->
         </b-col>
-        <b-col sm="6" class="text-right">
-          <div class="d-flex">
+        <b-col xl="8" class="text-right">
+          <div class="d-flex justify-content-end">
             <b-input-group class="panel-input-serach">
               <b-form-input
                 class="input-serach"
-                placeholder="ชื่อคู่ค้า"
+                placeholder="ชื่อพาร์ทเนอร์"
                 v-model="filter.Search"
                 @keyup="handleSearch"
               ></b-form-input>
@@ -228,8 +228,9 @@
                   <router-link
                     :to="'/finance/details/' + data.item.id"
                     v-if="financeTypeId != 4"
+                    class="text-dark"
                   >
-                    <b-button variant="link" class="px-1 py-0"
+                    <b-button variant="link" class="px-1 py-0 text-dark"
                       >ตรวจสอบ</b-button
                     >
                   </router-link>
@@ -254,7 +255,7 @@
               <b-thead head-variant="secondary">
                 <b-tr>
                   <b-th class="w-100px">เลขที่</b-th>
-                  <b-th class="w-100px">ชื่อคู่ค้า</b-th>
+                  <b-th class="w-100px">ชื่อพาร์ทเนอร์</b-th>
                   <b-th class="w-100px">จำนวนเงิน</b-th>
                   <b-th class="w-100px">วันชำระเงิน</b-th>
                   <b-th class="w-100px">รอบบิล</b-th>
@@ -302,8 +303,8 @@
                     ><span v-else>-</span></b-td
                   >
                   <b-td class="text-center w-100px">
-                    <router-link :to="'/finance/details/' + item2.id">
-                      <b-button variant="link" class="text-primary px-1 py-0"
+                    <router-link :to="'/finance/details/' + item2.id" class="text-dark">
+                      <b-button variant="link" class=" px-1 py-0 text-dark"
                         >ตรวจสอบ</b-button
                       >
                     </router-link></b-td
@@ -419,7 +420,7 @@ export default {
         },
         {
           key: "sellerName",
-          label: "ชื่อคู่ค้า",
+          label: "ชื่อพาร์ทเนอร์",
           class: "w-100px text-nowrap",
         },
         {

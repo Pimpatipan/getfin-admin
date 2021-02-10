@@ -1,5 +1,5 @@
 <template>
-  <div v-if="form">
+  <div >
     <form class="form-box">
       <b-row class="no-gutters bg-white px-4 pb-4">
         <b-row class="my-2">
@@ -14,13 +14,10 @@
         </b-row>
 
         <b-row class="w-100">
-          <b-col cols="6">
+          <b-col cols="12">
             <label class="font-weight-bold"
               >กรุณาบอกเหตุผลในการปฏิเสธข้อมูล</label
             >
-          </b-col>
-          <b-col cols="6" class="text-right">
-            <label class="font-weight-bold">{{ new Date(dataLog.updatedTime) | moment($formatDate) }}</label>
           </b-col>
           <div class="px-3">
             <p>{{ dataLog.warningLog.note }}</p>

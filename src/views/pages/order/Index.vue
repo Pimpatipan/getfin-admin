@@ -414,7 +414,7 @@ export default {
   },
   methods: {
     getList: async function () {
-      this.isBusy = true;
+      this.isBusy = true; 
 
       let status = await this.$callApi(
         "get",

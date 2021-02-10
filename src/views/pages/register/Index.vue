@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-container class="container-box">
+    <b-container class="container-box" v-if="$isLoading">
       <b-row class="no-gutters">
         <b-col>
           <h1 class="font-weight-bold header-main text-uppercase mb-3">
@@ -97,10 +97,10 @@
           </b-col>
         </b-row>
       </div>
-      <ModalAlert ref="modalAlert" :text="modalMessage" />
-      <ModalAlertError ref="modalAlertError" :text="modalMessage" />
-      <ModalLoading ref="modalLoading" :hasClose="false" />
     </b-container>
+    <ModalAlert ref="modalAlert" :text="modalMessage" />
+    <ModalAlertError ref="modalAlertError" :text="modalMessage" />
+    <ModalLoading ref="modalLoading" :hasClose="false" />
   </div>
 </template>
 
@@ -171,6 +171,7 @@ export default {
   created: async function () {
     this.$isLoading = false;
     await this.getDatas();
+    await this.changeLanguage(1, 0);
   },
   methods: {
     isNumber: function (evt) {
@@ -194,18 +195,8 @@ export default {
           .replace(/\//g, "");
       }
     },
-    handleCloseModal: function () {
-      if (this.flag == 1) {
-        window.location.href = "/other";
-      } else {
-        if (this.id > 0) {
-          this.getDatas();
-        } else {
-          window.location.href = "/other";
-        }
-      }
-    },
     getDatas: async function () {
+      this.$isLoading = false;
       let languages = await this.$callApi(
         "get",
         `${this.$baseUrl}/api/language `,
@@ -216,7 +207,6 @@ export default {
 
       if (languages.result == 1) {
         this.languageList = languages.detail;
-        this.changeLanguage(1, 0);
       }
 
       let data = await this.$callApi(
@@ -237,12 +227,13 @@ export default {
 
         if (this.form.staticPage.isSameLanguage) {
           this.imageLogoLang = "";
+          this.languageActive = this.form.staticPage.mainLanguageId;
         } else {
           var index = this.languageList
             .map(function (x) {
               return x.id;
             })
-            .indexOf(this.languageActive);
+            .indexOf(this.form.staticPage.mainLanguageId);
           this.imageLogoLang = this.languageList[index].imageUrl;
         }
 
@@ -250,8 +241,10 @@ export default {
       }
     },
     changeLanguage(id, index) {
-      this.languageActive = id;
-      this.imageLogoLang = this.languageList[index].imageUrl;
+      if (!this.form.staticPage.isSameLanguage) {
+        this.languageActive = id;
+        this.imageLogoLang = this.languageList[index].imageUrl;
+      }
     },
     useSameLanguage: async function () {
       Vue.nextTick(() => {
@@ -348,6 +341,9 @@ export default {
       if (data.result == 1) {
         this.modalMessage = "สำเร็จ";
         this.$refs.modalAlert.show();
+        setTimeout(() => {
+          this.$refs.modalAlert.hide();
+        }, 3000);
         this.getDatas();
       } else {
         this.$refs.modalAlertError.show();
@@ -363,21 +359,6 @@ export default {
       // }
 
       // this.isDisable = false;
-    },
-    deleteData: async function () {
-      if (confirm("Are you sure you want to delete this data?") == true) {
-        let data = await this.$callApi(
-          "delete",
-          `${this.$baseUrl}/api/staticPage/remove/${this.id}`,
-          null,
-          this.$headers,
-          null
-        );
-
-        if (data.result == 1) {
-          window.location.href = "/other";
-        }
-      }
     },
   },
 };

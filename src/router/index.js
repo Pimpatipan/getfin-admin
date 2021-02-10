@@ -67,6 +67,10 @@ const WithdrawDetails = () =>
     import('@/views/pages/withdraw/Details')
 const SettingsIndex = () =>
     import('@/views/pages/settings/Index')
+const Cod = () =>
+    import('@/views/pages/settings/Cod')
+const Tier = () =>
+    import('@/views/pages/settings/Tier')
 const AdminIndex = () =>
     import('@/views/pages/admin/Index')
 const AdminDetails = () =>
@@ -101,6 +105,8 @@ const AffiliateDetails = () =>
     import('@/views/pages/affiliate/Details')
 const AffiliateBankAccountDetails = () =>
     import('@/views/pages/affiliate/BankAccountDetails')
+const AffiliateLog = () =>
+    import('@/views/pages/affiliate/Log')
 const AdsIndex = () =>
     import('@/views/pages/ads/Index')
 const AdsDetails = () =>
@@ -119,8 +125,17 @@ const AcademyStaticPage4 = () =>
     import('@/views/pages/academy/staticpage/StaticPage4')
 const RegisterIndex = () =>
     import('@/views/pages/register/Index')
+const TermAndConPartner = () =>
+    import('@/views/pages/termandcondition/Partner')
+const PrivacyPolicyPartner = () =>
+    import('@/views/pages/privacypolicy/Partner')
 const CategoryList = () =>
     import('@/views/pages/category/List')
+const ResendOrderIndex = () => import("@/views/pages/resendorder/Index");
+const ResendOrderDetails = () => import("@/views/pages/resendorder/Details");
+const Dashboard = () => import("@/views/pages/dashboard/Index");
+const RevenueProduct = () => import("@/views/pages/dashboard/RevenueProduct");
+const DashboardTable = () => import("@/views/pages/dashboard/TableList");
 
 const Page404 = () =>
     import('@/views/pages/Page404')
@@ -143,7 +158,7 @@ export default new Router({
     },
     {
         path: '/',
-        redirect: '/product',
+        redirect: '/dashboard/productoverview',
         name: 'หน้าแรก',
         component: TheContainer,
         meta: { requiresAuth: true },
@@ -154,6 +169,36 @@ export default new Router({
             //   component: Welcome,
             //   meta: { requiresAuth: true },
             // },
+            {
+                path: "/dashboard/productoverview",
+                name: "ภาพรวมสินค้า",
+                component: Dashboard,
+                meta: { requiresAuth: true }
+            },
+            {
+                path: "/dashboard/revenueproduct",
+                name: "รายได้สินค้าทั้งหมด",
+                component: RevenueProduct,
+                meta: { requiresAuth: true }
+            },
+            {
+                path: "/dashboard/performance",
+                name: "ภาพรวมของเว็บ",
+                component: DashboardTable,
+                meta: { requiresAuth: true }
+            },
+            {
+                path: "/dashboard/campaign",
+                name: "แคมเปญ",
+                component: DashboardTable,
+                meta: { requiresAuth: true }
+            },
+            {
+                path: "/dashboard/productperformance",
+                name: "ภาพรวมของสินค้าทั้งหมด",
+                component: DashboardTable,
+                meta: { requiresAuth: true }
+            },
             {
                 path: '/product',
                 name: 'รายการสินค้าในระบบ',
@@ -215,6 +260,18 @@ export default new Router({
                 meta: { requiresAuth: true }
             },
             {
+                path: "/resendorder",
+                name: "รีเซนออเดอร์",
+                component: ResendOrderIndex,
+                meta: { requiresAuth: true }
+            },
+            {
+                path: "/resendorder/details/:id",
+                name: "รีเซนออเดอร์",
+                component: ResendOrderDetails,
+                meta: { requiresAuth: true }
+            },
+            {
                 path: '/order/verify/list',
                 name: 'รายการรอการตรวจสอบ',
                 component: OrderVerifyList,
@@ -263,6 +320,24 @@ export default new Router({
                 meta: { requiresAuth: true }
             },
             {
+                path: '/faq/partner',
+                name: 'จัดการคำถามที่พบบ่อยพาร์ทเนอร์',
+                component: FaqIndex,
+                meta: { requiresAuth: true }
+            },
+            {
+                path: '/faq/partner/details/:id',
+                name: 'จัดการคำถามที่พบบ่อย',
+                component: FaqDetails,
+                meta: { requiresAuth: true }
+            },
+            {
+                path: '/faq/partner/details/question/:id',
+                name: 'จัดการคำถามที่พบบ่อย',
+                component: FaqQuestionDetails,
+                meta: { requiresAuth: true }
+            },
+            {
                 path: '/category',
                 name: 'จัดการหมวดหมู่',
                 component: CategoryIndex,
@@ -270,7 +345,7 @@ export default new Router({
             },
             {
                 path: '/seller',
-                name: 'รายการผู้ขาย',
+                name: 'รายการพาร์ทเนอร์',
                 component: SellerIndex,
                 meta: { requiresAuth: true },
             },
@@ -312,7 +387,7 @@ export default new Router({
             },
             {
                 path: '/partner',
-                name: 'รายการพาทเนอร์',
+                name: 'รายการพาร์ทเนอร์ของเรา',
                 component: PartnerIndex,
                 meta: { requiresAuth: true },
             },
@@ -335,6 +410,18 @@ export default new Router({
                 meta: { requiresAuth: true },
             },
             {
+                path: '/settings/cod',
+                name: 'ตั้งค่าระบบการจัดส่ง',
+                component: Cod,
+                meta: { requiresAuth: true },
+            },
+            {
+                path: '/settings/tier',
+                name: 'ตั้งค่าระบบจัดการบัญชี',
+                component: Tier,
+                meta: { requiresAuth: true },
+            },
+            {
                 path: '/admin',
                 name: 'รายการผู้ดูแลระบบ',
                 component: AdminIndex,
@@ -348,7 +435,7 @@ export default new Router({
             },
             {
                 path: '/finance',
-                name: 'รายการเกี่ยวกับการเงิน (คู่ค้า)',
+                name: 'รายการเกี่ยวกับการเงินพาร์ทเนอร์',
                 component: FinanceIndex,
                 meta: { requiresAuth: true },
             },
@@ -384,13 +471,13 @@ export default new Router({
             },
             {
                 path: '/campaign/verify/partnerlist/:id',
-                name: 'รายชื่อคู่ค้า',
+                name: 'รายชื่อพาร์ทเนอร์',
                 component: CampaignPartnerList,
                 meta: { requiresAuth: true }
             },
             {
                 path: '/campaign/verify/productlist/:campid/:sellerid',
-                name: 'รายการสินค้าของคู่ค้า',
+                name: 'รายการสินค้าของพาร์ทเนอร์',
                 component: CampaignProductList,
                 meta: { requiresAuth: true }
             },
@@ -434,6 +521,12 @@ export default new Router({
                 path: '/affiliate/bankaccount/details/:id',
                 name: 'รายละเอียดบัญชี',
                 component: AffiliateBankAccountDetails,
+                meta: { requiresAuth: true }
+            },
+            {
+                path: '/affiliate/log/:id',
+                name: 'ประวัติ',
+                component: AffiliateLog,
                 meta: { requiresAuth: true }
             },
             {
@@ -497,10 +590,22 @@ export default new Router({
                 meta: { requiresAuth: true },
             },
             {
+                path: '/term-and-condition-partner',
+                name: 'ข้อกำหนดการใช้งานของพาร์ทเนอร์',
+                component: TermAndConPartner,
+                meta: { requiresAuth: true },
+            },
+            {
                 path: '/category/imagelist',
                 name: 'จัดการรูปหมวดหมู่',
                 component: CategoryList,
                 meta: { requiresAuth: true }
+            },
+            {
+                path: '/privacy-policy-partner',
+                name: 'นโยบายความเป็นส่วนตัวของพาร์ทเนอร์',
+                component: PrivacyPolicyPartner,
+                meta: { requiresAuth: true },
             },
             // {
             //   path: '/',

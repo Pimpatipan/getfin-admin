@@ -53,7 +53,9 @@
         </div>
         <p class="detail-format">{{ text }}</p>
         <div v-if="v && v.$error">
-          <span class="text-error" v-if="v.required == false">กรุณากรอกข้อมูล</span>
+          <span class="text-error" v-if="v.required == false"
+            >กรุณากรอกข้อมูล</span
+          >
         </div>
       </div>
       <div class="col-lg-1 p-0 text-right text-lg-left">
@@ -63,6 +65,7 @@
           md="4"
           class="btn-download"
           variant="link"
+          :disabled="fileName == '' || !fileName"
           @click.prevent="downloadItem(fileName)"
         >
           <font-awesome-icon
@@ -82,69 +85,69 @@ import axios from "axios";
 import ModalAlertError from "@/components/modal/alert/ModalAlertError";
 export default {
   components: {
-    ModalAlertError,
+    ModalAlertError
   },
   props: {
     textFloat: {
       required: true,
-      type: String,
+      type: String
     },
     text: {
       required: false,
-      type: String,
+      type: String
     },
     format: {
       required: true,
-      type: String,
+      type: String
     },
     fileName: {
       required: true,
-      type: String,
+      type: String
     },
     required: {
       required: false,
-      type: Boolean,
+      type: Boolean
     },
     name: {
       required: false,
-      type: String,
+      type: String
     },
     isRequired: {
       required: false,
-      type: Boolean,
+      type: Boolean
     },
     isValidate: {
       required: false,
-      type: Boolean,
+      type: Boolean
     },
     placeholder: {
       required: true,
-      type: String,
+      type: String
     },
     size: {
       required: false,
-      type: String,
+      type: String
     },
     downloadPath: {
       required: false,
-      type: String,
+      type: String
     },
     v: {
       required: false,
-      type: Object,
+      type: Object
     },
     classLabelName: {
       required: false,
-      type: String,
+      type: String
     },
     classInputName: {
       required: false,
-      type: String,
+      type: String
     },
     cantEdit: {
       required: false,
-      type: Boolean,
-    },
+      type: Boolean
+    }
   },
   data() {
     return {
@@ -159,8 +162,8 @@ export default {
         video: ["video/mp4"],
         excel: [
           "application/vnd.ms-excel",
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        ],
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        ]
       },
       error: "",
       hasError: false,
@@ -169,21 +172,25 @@ export default {
       msgModal: null,
       modalAlertShow: false,
       isSuccess: false,
-      modalMessage: "",
+      modalMessage: ""
     };
   },
   computed: {
-    fileNameDisplay: function () {
+    fileNameDisplay: function() {
       if (this.fileName) {
         if (this.fileName.includes(this.$baseUrl)) {
-          return this.fileName.split("\\").pop().split("/")[4];
+          return this.fileName
+            .split("\\")
+            .pop()
+            .split("/")[4];
         } else {
-          return this.fileName;
+          return this.fileName.split("//")
+            .pop().split("/").pop();
         }
       } else {
         return this.fileName;
       }
-    },
+    }
   },
   methods: {
     handleFileChange(e) {
@@ -234,7 +241,7 @@ export default {
         this.hasError = true;
       }
     },
-    downloadItem: async function (path) {
+    downloadItem: async function(path) {
       let pathFile = path;
 
       var name_without_ext = path
@@ -248,8 +255,8 @@ export default {
         url: pathFile,
         method: "GET",
         // headers: null,
-        responseType: "blob",
-      }).then((response) => {
+        responseType: "blob"
+      }).then(response => {
         var fileURL = window.URL.createObjectURL(new Blob([response.data]));
         var fileLink = document.createElement("a");
 
@@ -265,8 +272,8 @@ export default {
     deleteImage() {
       this.$emit("delete", true);
       this.hasImage = false;
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -298,13 +305,13 @@ input[type="file"] {
   padding: 0px;
 }
 .input-custom > label {
-  color: #16274a;
+  color: #333333;
   font-size: 16px;
   margin-bottom: 2px;
   font-weight: bold;
 }
 input.custom-input {
-  color: #16274a;
+  color: #333333;
   background-color: white;
   border: 1px solid #bcbcbc;
   border-radius: 0px;
@@ -364,17 +371,17 @@ input[size="lg"].custom-input {
   text-decoration: underline;
 }
 .btn-download {
-    width: 50px;
-    text-align: center;
-    height: 37px;
-    vertical-align: middle;
-    cursor: pointer;
-    background: #16274a;
-    color: #fff;
-    padding: 7px 10px;
-    margin-left: 5px;
-    margin-top: 1px;
-    border-radius: 0;
+  width: 50px;
+  text-align: center;
+  height: 37px;
+  vertical-align: middle;
+  cursor: pointer;
+  background: #16274a;
+  color: #fff;
+  padding: 7px 10px;
+  margin-left: 5px;
+  margin-top: 1px;
+  border-radius: 0;
 }
 .delete-icon {
   position: absolute;
@@ -400,10 +407,10 @@ input[size="lg"].custom-input {
 }
 @media (min-width: 992px) and (max-width: 1200px) {
   .input-custom > div {
-    margin-left: 25px;
+    /* margin-left: 25px; */
   }
   .input-custom > p {
-    margin-left: 25px;
+    /* margin-left: 25px; */
   }
 }
 </style>

@@ -8,7 +8,7 @@
           </h1>
         </b-col>
         <b-col sm="6" class="text-right">
-          <div class="d-flex">
+          <div class="d-flex justify-content-end">
             <b-input-group class="panel-input-serach">
               <b-form-input
                 class="input-serach"
@@ -26,7 +26,7 @@
         </b-col>
       </CRow>
 
-      <b-row class="mt-3 no-gutters mx-3 mx-sm-0">
+      <b-row class="no-gutters mx-3 mx-sm-0">
         <b-col class="label-text pt-2">
           <b-form-checkbox
             size="lg"

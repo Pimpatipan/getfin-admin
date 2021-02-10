@@ -161,13 +161,10 @@
         </b-col>
       </b-row>
       <b-row class="bg-white no-gutters px-3 pt-3">
-        <b-col cols="6">
+        <b-col cols="12">
           <label class="font-weight-bold"
             >กรุณาบอกเหตุผลในการปฏิเสธข้อมูล</label
           >
-        </b-col>
-        <b-col cols="6" class="text-right">
-          <label class="font-weight-bold">{{ new Date(dataLog.updatedTime) | moment($formatDate) }}</label>
         </b-col>
         <div>
           <p>{{ dataLog.warningLog.note }}</p>

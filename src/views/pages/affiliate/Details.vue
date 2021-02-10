@@ -46,40 +46,40 @@
               <b-col sm="8" class="">
                 <div class="w-100">
                   <b-row class="">
-                    <b-col cols="4" class="font-weight-bold one-line"
+                    <b-col cols="5" class="font-weight-bold px-3 px-sm-0"
                       >ชื่อตัวแทน :</b-col
                     >
-                    <b-col class="mb-2 mb-sm-0" cols="8">
+                    <b-col class="mb-2 mb-sm-0" cols="7">
                       {{ form.user.firstname }} {{ form.user.lastname }}
                       <!-- {{ form.user.displayNameTranslation[0].name }} -->
                     </b-col>
                   </b-row>
 
                   <b-row class="">
-                    <b-col cols="4" class="font-weight-bold one-line"
+                    <b-col cols="5" class="font-weight-bold px-3 px-sm-0"
                       >เบอร์ติดต่อ :</b-col
                     >
-                    <b-col class="mb-2 mb-sm-0" cols="8">
+                    <b-col class="mb-2 mb-sm-0" cols="7">
                       {{ form.user.telephone }}
                       <!-- {{ form.user.firstname }} {{ form.user.lastname }} -->
                     </b-col>
                   </b-row>
 
                   <b-row class="">
-                    <b-col cols="4" class="font-weight-bold one-line"
+                    <b-col cols="5" class="font-weight-bold px-3 px-sm-0"
                       >อีเมล :</b-col
                     >
-                    <b-col class="mb-2 mb-sm-0" cols="8">
-                      {{ form.user.email }}
+                    <b-col class="mb-2 mb-sm-0" cols="7">
+                      <p class="m-0 text-wrap">{{ form.user.email }}</p>  
                       <!-- {{ form.user.firstname }} {{ form.user.lastname }} -->
                     </b-col>
                   </b-row>
 
                   <b-row class="">
-                    <b-col cols="4" class="font-weight-bold one-line"
+                    <b-col cols="5" class="font-weight-bold px-3 px-sm-0"
                       >วันเกิด :</b-col
                     >
-                    <b-col class="mb-2 mb-sm-0" cols="8">
+                    <b-col class="mb-2 mb-sm-0" cols="7">
                       {{ form.user.birthday | moment($formatDate) }}
                       <!-- {{ form.user.firstname }} {{ form.user.lastname }} -->
                     </b-col>
@@ -89,22 +89,18 @@
             </b-row>
           </b-col>
           <b-col sm="6" xl="4" class="bg-white py-3">
-            <div class="row">
+            <div class="row h-100">
               <b-col>
                 <b-row class="">
-                  <b-col cols="4" class="font-weight-bold one-line"
-                    >เลขที่บัญชี :</b-col
-                  >
-                  <b-col class="mb-2 mb-sm-0 one-line" cols="8">
+                  <b-col cols="5" class="font-weight-bold">เลขที่บัญชี :</b-col>
+                  <b-col class="mb-2 mb-sm-0" cols="7">
                     {{ form.bankAccount.accountNo }}
                   </b-col>
                 </b-row>
 
                 <b-row class="">
-                  <b-col cols="4" class="font-weight-bold one-line"
-                    >ธนาคาร :</b-col
-                  >
-                  <b-col class="mb-2 mb-sm-0 one-line" cols="8">
+                  <b-col cols="5" class="font-weight-bold">ธนาคาร :</b-col>
+                  <b-col class="mb-2 mb-sm-0" cols="7">
                     {{ form.bankAccount.bankName }}
                   </b-col>
                 </b-row>
@@ -116,6 +112,9 @@
                     >
                       <router-link :to="'/affiliate/bankaccount/details/' + id">
                         <span class="mr-1">ดูเอกสารบัญชี</span>
+                      </router-link>
+                      <router-link :to="'/affiliate/log/' + id">
+                        <span class="mr-1">ดูประวัติ</span>
                       </router-link>
                     </div>
                   </b-col>
@@ -136,27 +135,26 @@
               <div class="p-2 bg-white text-center w-100">
                 <font-awesome-icon icon="star" class="stars" /> คะแนน
                 <span class="text-primary f-20 font-weight-bold ml-3">{{
-                  form.user.point
+                  form.user.point | numeral("0,0")
                 }}</span>
               </div>
             </div>
             <b-row class="no-gutters">
               <b-col cols="12" class="bg-white mt-1 p-3">
                 <b-row class="">
-                  <b-col md="4" class="font-weight-bold one-line"
+                  <b-col cols="5" class="font-weight-bold one-line"
                     >สถานะบัญชี :</b-col
                   >
-                  <b-col class="mb-2 mb-sm-0 one-line" md="8">
-                    <div v-if="form.user.statusId == 0" class="text-dark">
-                      ถูกระงับ
+                  <b-col class="mb-2 mb-sm-0 one-line" cols="7">
+                    <div v-if="!form.user.isVerifyAffiliate" class="text-dark">
+                      ยังไม่ได้รับการตรวจสอบ
                     </div>
                     <div
-                      v-else-if="form.user.statusId == 1"
+                      v-else-if="form.user.isVerifyAffiliate"
                       class="text-success"
                     >
-                      อนุมัติ
+                      ได้รับการตรวจสอบแล้ว
                     </div>
-                    <div v-else class="text-warning">รอการอนุมัติ</div>
                   </b-col>
                 </b-row>
               </b-col>
@@ -165,7 +163,11 @@
         </b-row>
 
         <b-row class="mx-3 mx-sm-0 mt-3 mt-md-0">
-          <b-col lg="6" offset-lg="6" class="text-right d-flex px-0">
+          <b-col
+            xl="6"
+            offset-xl="6"
+            class="text-right d-flex px-0 justify-content-end"
+          >
             <b-input-group class="panel-input-serach">
               <b-form-input
                 class="input-serach"
@@ -185,12 +187,14 @@
                 title="filter-btn"
                 class="text-white mr-0 mr-sm-1"
               />
-              <span class="d-none d-sm-inline">ค้นหาแบบละเอียด ({{
-                countStatus +
-                countPaymentChannel +
-                countStartdate +
-                countEnddate
-              }})</span>
+              <span class="d-none d-sm-inline"
+                >ค้นหาแบบละเอียด ({{
+                  countStatus +
+                  countPaymentChannel +
+                  countStartdate +
+                  countEnddate
+                }})</span
+              >
             </b-button>
           </b-col>
         </b-row>
@@ -272,12 +276,12 @@
         </b-sidebar>
 
         <b-row class="mt-3 nomargin-mobile">
-          <b-col sm="4" class="mb-2 mb-sm-0">
+          <b-col xl="4" class="mb-2 mb-xl-0">
             <div class="bg-blue p-3">
               <b-row>
                 <b-col>
-                  <p class="font-weight-bold m-0 one-line">ยอดทั้งหมด</p>
-                  <p class="m-0 one-line">
+                  <p class="font-weight-bold m-0">ยอดทั้งหมด</p>
+                  <p class="m-0 f-14">
                     ตั้งแต่ {{ new Date() | moment("MMMM YYYY") }}
                   </p>
                 </b-col>
@@ -288,11 +292,11 @@
               </b-row>
             </div>
           </b-col>
-          <b-col sm="4" class="mb-2 mb-sm-0">
+          <b-col xl="4" class="mb-2 mb-xl-0">
             <div class="bg-blue p-3 h-100">
               <b-row class="h-100">
                 <b-col class="m-auto">
-                  <p class="font-weight-bold m-0 one-line">เงินคืนที่ได้รับ</p>
+                  <p class="font-weight-bold m-0">เงินคืนที่ได้รับ</p>
                 </b-col>
                 <b-col
                   class="f-16 font-weight-bold text-white text-right m-auto"
@@ -302,11 +306,11 @@
               </b-row>
             </div>
           </b-col>
-          <b-col sm="4" class="mb-2 mb-sm-0">
+          <b-col xl="4" class="mb-2 mb-xl-0">
             <div class="bg-blue p-3 h-100">
               <b-row class="h-100">
                 <b-col class="m-auto">
-                  <p class="font-weight-bold m-0 one-line">จำนวนออร์เดอร์</p>
+                  <p class="font-weight-bold m-0">จำนวนออร์เดอร์</p>
                 </b-col>
                 <b-col
                   class="f-16 font-weight-bold text-white text-right m-auto"
@@ -348,6 +352,11 @@
                   <p class="m-0">
                     ฿ {{ data.item.cashback | numeral("0,0.00") }}
                   </p>
+                </template>
+                <template v-slot:cell(createdTime)="data">
+                  <span>{{
+                    new Date(data.item.createdTime) | moment($formatDate)
+                  }}</span>
                 </template>
                 <template v-slot:cell(point)="data">
                   <p class="m-0">{{ data.item.point | numeral("0,0") }}</p>
@@ -451,11 +460,14 @@ export default {
         },
         { key: "grandTotal", label: "จำนวนเงิน", class: "w-100px text-nowrap" },
         { key: "qty", label: "จำนวนสินค้า", class: "w-100px text-nowrap" },
-        { key: "orderStatus", label: "สถานะคำสั่งซื้อ", class: "text-nowrap" },
-        { key: "point", label: "คะแนนที่ได้รับ", class: "w-100px text-nowrap" },
+        {
+          key: "orderStatus",
+          label: "สถานะคำสั่งซื้อ",
+          class: "w-100px text-nowrap",
+        },
         {
           key: "cashback",
-          label: "Cashback / เงินคืน",
+          label: "เงินคืน",
           class: "w-100px text-nowrap",
         },
       ],

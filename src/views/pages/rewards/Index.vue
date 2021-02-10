@@ -5,7 +5,7 @@
         <b-col xl="6" class="text-center text-sm-left mb-3 mb-sm-0">
           <h1 class="mr-sm-4 header-main text-uppercase">รายการวอชเชอร์</h1>
         </b-col>
-        <b-col xl="6" class="text-right d-flex">
+        <b-col xl="6" class="text-right d-flex justify-content-end">
           <b-input-group class="panel-input-serach">
             <b-form-input
               class="input-serach"
@@ -139,6 +139,9 @@
               <template v-slot:cell(uses)="data">
                 <span> {{ data.item.uses | numeral("0,0") }} </span>
               </template>
+              <template v-slot:cell(quantity)="data">
+                <span> {{ data.item.quantity | numeral("0,0") }} </span>
+              </template>
               <template v-slot:cell(enabled)="data">
                 <div v-if="data.item.enabled == true" class="text-success">
                   ใช้งาน
@@ -212,70 +215,70 @@ export default {
       modalMessage: "",
       activeItem: "",
       requestDeleteUser: {
-        userId: null,
+        userId: null
       },
       fields: [
         {
           key: "name",
           label: "ชื่อวอชเชอร์",
-          class: "w-100px",
+          class: "w-100px"
         },
         {
           key: "prefix",
           label: "Prefix",
-          class: "w-100px",
+          class: "w-100px"
         },
         {
           key: "bathOrPercent",
           label: "ประเภทวอชเชอร์",
-          class: "w-100px",
+          class: "w-100px"
         },
         {
           key: "point",
           label: "คะแนนที่ใช้แลก",
-          class: "w-100px",
+          class: "w-100px"
         },
         {
           key: "value",
           label: "ส่วนลดที่ได้รับ",
           class: "w-100px",
-          tdClass: "text-right",
+          tdClass: "text-right"
         },
         {
           key: "startDateEnable",
           label: "วันที่แลกวอชเชอร์",
-          class: "w-100px",
+          class: "w-100px"
         },
         {
           key: "maximum",
           label: "จำนวนทั้งหมด",
-          class: "w-100px",
+          class: "w-100px"
         },
         {
           key: "quantity",
           label: "จำนวนที่เหลือ",
-          class: "w-100px",
+          class: "w-100px"
         },
         {
           key: "uses",
           label: "ถูกใช้ไปแล้ว",
-          class: "w-100px",
+          class: "w-100px"
         },
         {
           key: "startDate",
           label: "วันที่ใช้งาน",
-          class: "w-100px",
+          class: "w-100px"
         },
         {
           key: "enabled",
           label: "สถานะ",
-          class: "w-100px",
+          class: "w-100px"
         },
         {
           key: "id",
           label: "",
-          class: "w-100px",
-        },
+          class: "w-100px"
+        }
       ],
       items: [],
       isBusy: false,
@@ -285,13 +288,13 @@ export default {
         pageNo: 1,
         perpage: 10,
         startDate: "",
-        endDate: "",
+        endDate: ""
       },
       pageOptions: [
         { value: 10, text: "10 / หน้า" },
         { value: 30, text: "30 / หน้า" },
         { value: 50, text: "50 / หน้า" },
-        { value: 100, text: "100 / หน้า" },
+        { value: 100, text: "100 / หน้า" }
       ],
       totalRowMessage: "",
       items: [],
@@ -299,30 +302,30 @@ export default {
       isDisable: false,
       checkAll: false,
       selectAllCb: false,
-      errorDate: false,
+      errorDate: false
     };
   },
   computed: {
-    countStartdate: function () {
+    countStartdate: function() {
       var count = 0;
       if (this.filter.startDate != "") count += 1;
       else if (count > 0) count -= 1;
       return count;
     },
-    countEnddate: function () {
+    countEnddate: function() {
       var count = 0;
 
       if (this.filter.endDate != "") count += 1;
       else if (count > 0) count -= 1;
       return count;
-    },
+    }
   },
-  created: async function () {
+  created: async function() {
     await this.getList();
     this.$isLoading = true;
   },
   methods: {
-    getList: async function () {
+    getList: async function() {
       this.isBusy = true;
 
       let resData = await this.$callApi(
@@ -394,10 +397,10 @@ export default {
       } else {
         this.selectAllCb = false;
       }
-    },
-  },
+    }
+  }
 };
-</script>       
+</script>
 
 <style scoped>
 .menuactive {

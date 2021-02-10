@@ -1,4 +1,4 @@
-    <template>
+<template>
   <div v-if="withdraw">
     <form class="form-box">
       <b-container class="container-box">
@@ -182,9 +182,9 @@
                     new Date(data.item.createdTime) | moment($formatDateTime)
                   }}</span>
                 </template>
-                <template v-slot:cell(cratedBy)="data">
-                  <div v-if="data.item.cratedBy == null">-</div>
-                  <div v-else>{{ data.item.cratedBy }}</div>
+                <template v-slot:cell(createdBy)="data">
+                  <div v-if="data.item.createdBy == null">-</div>
+                  <div v-else>{{ data.item.createdBy }}</div>
                 </template>
               </b-table>
 
@@ -232,7 +232,7 @@ export default {
   components: {
     ModalAlert,
     ModalAlertError,
-    ModalLoading,
+    ModalLoading
   },
   data() {
     return {
@@ -254,86 +254,86 @@ export default {
         { value: 10, text: "10 / หน้า" },
         { value: 30, text: "30 / หน้า" },
         { value: 50, text: "50 / หน้า" },
-        { value: 100, text: "100 / หน้า" },
+        { value: 100, text: "100 / หน้า" }
       ],
       fields: [
         {
           key: "createdTime",
           label: "วันที่ทำรายการ",
-          class: "w-100px",
+          class: "w-100px"
         },
         {
           key: "status",
           label: "สถานะ",
-          class: "w-100px",
+          class: "w-100px"
         },
         {
-          key: "cratedBy",
+          key: "createdBy",
           label: "โดย",
-          class: "w-100px",
-        },
+          class: "w-100px"
+        }
       ],
       fieldsOrder: [
         {
           key: "invoiceNo",
           label: "เลขที่คำสั่งซื้อ",
-          class: "w-100px",
+          class: "w-100px"
         },
         {
           key: "createdTime",
           label: "วันที่ทำรายการ",
-          class: "w-100px",
+          class: "w-100px"
         },
         {
           key: "name",
           label: "ผู้ซื้อ",
-          class: "w-100px",
+          class: "w-100px"
         },
         {
           key: "paymentType",
           label: "ช่องทางการชำระเงิน",
-          class: "w-100px",
+          class: "w-100px"
         },
         {
           key: "amount",
           label: "จำนวนเงิน",
-          class: "w-100px",
+          class: "w-100px"
         },
         {
           key: "orderStatus",
           label: "สถานะ",
-          class: "w-100px",
+          class: "w-100px"
         },
         {
           key: "qty",
           label: "จำนวน",
-          class: "w-100px",
-        },
+          class: "w-100px"
+        }
       ],
       filter: {
         ObjectId: this.$route.params.id,
         pageNo: 1,
-        perpage: 10,
+        perpage: 10
       },
       filterLog: {
         ObjectId: this.$route.params.id,
         status: [],
         pageNo: 1,
-        perpage: 10,
-      },
+        perpage: 10
+      }
     };
   },
-  created: async function () {
+  created: async function() {
     await this.getData();
     await this.getOrderStatus();
     await this.getOrderStatusLog();
     this.$isLoading = true;
   },
   methods: {
-    moment: function () {
+    moment: function() {
       return moment();
     },
-    getData: async function () {
+    getData: async function() {
       this.isLoadingData = true;
 
       let status = await this.$callApi(
@@ -362,7 +362,7 @@ export default {
         this.isLoadingData = false;
       }
     },
-    getOrderStatus: async function () {
+    getOrderStatus: async function() {
       this.isBusy = true;
       let order = await this.$callApi(
         "post",
@@ -378,7 +378,7 @@ export default {
         this.isBusy = false;
       }
     },
-    getOrderStatusLog: async function () {
+    getOrderStatusLog: async function() {
       this.isBusy = true;
       let order = await this.$callApi(
         "post",
@@ -394,13 +394,13 @@ export default {
         this.isBusy = false;
       }
     },
-    onChangeStatus: async function (value) {
+    onChangeStatus: async function() {
       this.isDisable = true;
       this.$refs.modalLoading.show();
 
       let body = {
         Id: this.id,
-        statusId: value,
+        statusId: this.withdraw.statusId
       };
 
       let data = await this.$callApi(
@@ -417,6 +417,9 @@ export default {
 
       if (data.result == 1) {
         this.$refs.modalAlert.show();
+        setTimeout(() => {
+          this.$refs.modalAlert.hide();
+        }, 3000);
         this.getData();
       } else {
         this.$refs.modalAlertError.show();
@@ -431,12 +434,12 @@ export default {
       this.filter.perpage = value;
       this.getOrderStatus();
     },
-    updateStatusWithdraw: async function () {
+    updateStatusWithdraw: async function() {
       this.isDisable = true;
 
       let request = {
         Id: this.id,
-        StatusId: 0,
+        StatusId: 0
       };
 
       let data = await this.$callApi(
@@ -451,12 +454,15 @@ export default {
       this.isDisable = false;
       if (data.result == 1) {
         this.$refs.modalAlert.show();
+        setTimeout(() => {
+          this.$refs.modalAlert.hide();
+        }, 3000);
         this.getData();
       } else {
         this.$refs.modalAlertError.show();
       }
-    },
-  },
+    }
+  }
 };
 </script>
 

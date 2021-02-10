@@ -2,10 +2,10 @@
   <div>
     <div class="min-vh-100">
       <CRow class="no-gutters px-3 px-sm-0">
-        <b-col sm="6" class="text-center text-sm-left mb-3 mb-sm-0">
+        <b-col xl="4" class="text-center text-sm-left mb-3 mb-sm-0">
           <h1 class="mr-sm-4 header-main text-uppercase">รายการตัวแทน</h1>
         </b-col>
-        <b-col sm="6" class="text-right d-flex">
+        <b-col xl="8" class="text-right d-flex justify-content-end">
           <b-input-group class="panel-input-serach">
             <b-form-input
               class="input-serach"
@@ -144,8 +144,8 @@
           <b-row>
             <b-col>
               <InputText
-                textFloat="คอมมิชชั่นเริ่มต้น"
-                placeholder="คอมมิชชั่นเริ่มต้น"
+                textFloat="เงินคืนเริ่มต้น"
+                placeholder="เงินคืนเริ่มต้น"
                 type="text"
                 name="comstart"
                 v-model="filter.MinCashback"
@@ -154,8 +154,8 @@
             <span class="lh-60">-</span>
             <b-col>
               <InputText
-                textFloat="คอมมิชชั่นสิ้นสุด"
-                placeholder="คอมมิชชั่นสิ้นสุด"
+                textFloat="เงินคืนสิ้นสุด"
+                placeholder="เงินคืนสิ้นสุด"
                 type="text"
                 name="comend"
                 v-model="filter.MaxCashback"
@@ -226,13 +226,13 @@
                 </p>
               </template>
               <template v-slot:cell(statusId)="data">
-                <div v-if="data.item.statusId == 0" class="text-dark">
-                  ถูกระงับ
+                <div v-if="data.item.statusId == 0" class="text-danger">
+                  ปิดใช้งาน
                 </div>
                 <div v-else-if="data.item.statusId == 1" class="text-success">
-                  อนุมัติ
+                  เปิดใช้งาน
                 </div>
-                <div v-else class="text-warning">รอการอนุมัติ</div>
+                <div v-else class="text-warning">รอการยืนยัน</div>
               </template>
               <template v-slot:cell(genderId)="data">
                 <div v-if="data.item.genderId == 1">ชาย</div>
@@ -411,8 +411,8 @@ export default {
       ],
       optionsStatus: [
         { value: [], text: "สถานะ" },
-        { value: 0, text: "ถูกระงับ" },
-        { value: 1, text: "อนุมัติ" },
+        { value: 0, text: "ปิดใช้งาน" },
+        { value: 1, text: "เปิดใช้งาน" },
         { value: 2, text: "รอการยืนยัน" },
       ],
       errorDate: false,
@@ -544,7 +544,6 @@ export default {
       this.getList();
     },
     handleChangeTier: async function (value) {
-      console.log(this.filter.tier,this.filter.status)
       this.filter.Tier = [];
       if (typeof value == "number") {
         this.filter.Tier.push(value);

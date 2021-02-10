@@ -115,11 +115,10 @@
 
         <b-row class="mt-5">
           <b-col md="6">
-            <b-button
-              :href="'/review/details/' + form.reviewHomePageId"
-              :disabled="isDisable"
-              class="btn-details-set btn-cancel"
-              >ย้อนกลับ</b-button
+            <router-link :to="'/review/details/' + form.reviewHomePageId">
+              <b-button :disabled="isDisable" class="btn-details-set btn-cancel"
+                >ย้อนกลับ</b-button
+              ></router-link
             >
           </b-col>
           <b-col md="6" class="text-sm-right">
@@ -168,7 +167,7 @@ export default {
     UploadFile,
     ModalAlert,
     ModalAlertError,
-    ModalLoading
+    ModalLoading,
   },
   data() {
     return {
@@ -242,7 +241,8 @@ export default {
       this.isDisable = true;
       this.$refs.modalLoading.show();
 
-      if(this.form.reviewHomePageId == 0) this.form.reviewHomePageId = VueCookies.get("review_topic_id");
+      if (this.form.reviewHomePageId == 0)
+        this.form.reviewHomePageId = VueCookies.get("review_topic_id");
 
       let data = await this.$callApi(
         "post",
@@ -261,10 +261,15 @@ export default {
         var id = this.form.reviewHomePageId;
 
         if (this.flag == 1) {
-          setTimeout(function () {
-            window.location.href = `/review/details/${id}`;
+          setTimeout(()=> {
+            this.$router.push({
+              path: `/review/details/${id}`,
+            });
           }, 3000);
         } else {
+          setTimeout(() => {
+            this.$refs.modalAlert.hide();
+          }, 3000);
           if (this.id > 0) {
             this.getDatas();
           } else {

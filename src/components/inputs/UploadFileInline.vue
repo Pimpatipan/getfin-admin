@@ -52,10 +52,11 @@
           >
         </div>-->
       </div>
+
       <a
         :href="fileName"
         download
-        v-if="section"
+        v-if="section && fileName && fileName !== ''"
         :class="[classSection, 'text-underline text-primary pointer']"
         @click.prevent="downloadItem(fileName)"
         >ดาวน์โหลดเอกสาร</a
@@ -76,78 +77,78 @@ import axios from "axios";
 import ModalAlertError from "@/components/modal/alert/ModalAlertError";
 export default {
   components: {
-    ModalAlertError,
+    ModalAlertError
   },
   props: {
     textFloat: {
       required: true,
-      type: String,
+      type: String
     },
     text: {
       required: false,
-      type: String,
+      type: String
     },
     format: {
       required: true,
-      type: String,
+      type: String
     },
     fileName: {
       required: true,
-      type: String,
+      type: String
     },
     required: {
       required: false,
-      type: Boolean,
+      type: Boolean
     },
     name: {
       required: false,
-      type: String,
+      type: String
     },
     isRequired: {
       required: false,
-      type: Boolean,
+      type: Boolean
     },
     isValidate: {
       required: false,
-      type: Boolean,
+      type: Boolean
     },
     placeholder: {
       required: true,
-      type: String,
+      type: String
     },
     size: {
       required: false,
-      type: String,
+      type: String
     },
     downloadPath: {
       required: false,
-      type: String,
+      type: String
     },
     v: {
       required: false,
-      type: Object,
+      type: Object
     },
     classLabelName: {
       required: false,
-      type: String,
+      type: String
     },
 
     classInputName: {
       required: false,
-      type: String,
+      type: String
     },
     classSection: {
       required: false,
-      type: String,
+      type: String
     },
     section: {
       required: false,
-      type: String,
+      type: String
     },
     disabled: {
       required: false,
-      type: Boolean,
-    },
+      type: Boolean
+    }
   },
   data() {
     return {
@@ -162,8 +163,8 @@ export default {
         video: ["video/mp4"],
         excel: [
           "application/vnd.ms-excel",
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        ],
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        ]
       },
       error: "",
       hasError: false,
@@ -172,7 +173,7 @@ export default {
       msgModal: null,
       modalAlertShow: false,
       isSuccess: false,
-      modalMessage: "",
+      modalMessage: ""
     };
   },
   methods: {
@@ -231,7 +232,7 @@ export default {
         url: pathFile,
         method: "GET",
         // headers: null,
-        responseType: "blob",
+        responseType: "blob"
       }).then(response => {
         var fileURL = window.URL.createObjectURL(new Blob([response.data]));
         var fileLink = document.createElement("a");
@@ -248,8 +249,8 @@ export default {
     deleteImage() {
       this.$emit("delete", true);
       this.hasImage = false;
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -346,6 +347,9 @@ input[size="lg"].custom-input {
   position: absolute;
   right: 5%;
   top: 10px;
+}
+.text-secondary {
+  color: gray;
 }
 @media (max-width: 767.98px) {
   .input-custom > label {

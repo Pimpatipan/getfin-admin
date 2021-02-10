@@ -120,6 +120,9 @@
 
                     <b-col class="my-2 mb-sm-0" md="12">
                       {{ form.shippingAddress.address }}
+                      {{ form.shippingAddress.building }}
+                      {{ form.shippingAddress.alley }}
+                      {{ form.shippingAddress.road }}
                       {{ form.shippingAddress.subDistrict }}
                       {{ form.shippingAddress.district }}
                       {{ form.shippingAddress.province }}
@@ -146,7 +149,12 @@
                     >
 
                     <b-col class="my-2 mb-sm-0" md="12"
-                      >{{ form.billingAddress.address }}
+                      >{{ form.billingAddress.address }} >{{
+                        form.billingAddress.building
+                      }}
+                      >{{ form.billingAddress.alley }} >{{
+                        form.billingAddress.road
+                      }}
                       {{ form.billingAddress.subDistrict }}
                       {{ form.billingAddress.district }}
                       {{ form.billingAddress.province }}
@@ -189,10 +197,12 @@
                       ><div
                         class="logo-seller"
                         v-bind:style="{
-                          'background-image': 'url(' + item.store.logo + ')',
+                          'background-image': 'url(' + item.store.logo + ')'
                         }"
                       ></div>
-                      <span class="my-auto">{{ item.store.name }}</span></b-col
+                      <span class="my-auto ml-2">{{
+                        item.store.displayName
+                      }}</span></b-col
                     >
                   </b-row>
 
@@ -214,7 +224,7 @@
                           class="square-box b-contain"
                           v-bind:style="{
                             'background-image':
-                              'url(' + data.item.productImageUrl + ')',
+                              'url(' + data.item.productImageUrl + ')'
                           }"
                         ></div>
                       </template>
@@ -224,6 +234,7 @@
                         <div class="d-flex">
                           <div
                             v-for="(item, index) in data.item.attribute"
+                            :key="index"
                             class="config-tag mr-1 mt-1"
                           >
                             {{ item.label }} : {{ item.option.label }}
@@ -257,7 +268,7 @@
                       <b-col sm="6" offset-md="6">
                         <div class="bg-yellow p-3">
                           <b-row class="pb-2">
-                            <b-col cols="7">รวม</b-col>
+                            <b-col cols="7">ยอดรวม (รวม VAT) </b-col>
                             <b-col cols="5" class="text-right"
                               >฿
                               {{
@@ -265,58 +276,10 @@
                               }}</b-col
                             >
                           </b-row>
+                          <hr />
+
                           <b-row class="pb-2">
-                            <b-col cols="7">ส่วนลด</b-col>
-                            <b-col cols="5" class="text-right"
-                              >- ฿
-                              {{
-                                item.order.discount | numeral("0,0.00")
-                              }}</b-col
-                            >
-                          </b-row>
-                          <b-row class="pb-2">
-                            <b-col cols="7">ค่าธรรมเนียม GetFin</b-col>
-                            <b-col cols="5" class="text-right"
-                              >฿
-                              {{
-                                item.order.getfinFee | numeral("0,0.00")
-                              }}</b-col
-                            >
-                          </b-row>
-                          <b-row class="pb-2">
-                            <b-col cols="7">ค่าธรรมเนียม Omise</b-col>
-                            <b-col cols="5" class="text-right"
-                              >฿
-                              {{
-                                (item.order.omiseCharge + item.order.omiseVat)
-                                  | numeral("0,0.00")
-                              }}</b-col
-                            >
-                          </b-row>
-                          <b-row class="pb-2 f-14">
-                            <b-col cols="7" class="pl-4"
-                              >ค่าธรรมเนียม Omise</b-col
-                            >
-                            <b-col cols="5" class="text-right"
-                              >฿
-                              {{
-                                item.order.omiseCharge | numeral("0,0.00")
-                              }}</b-col
-                            >
-                          </b-row>
-                          <b-row class="pb-2 f-14">
-                            <b-col cols="7" class="pl-4"
-                              >ค่าธรรมเนียมรับชำระเงิน (3.65%)</b-col
-                            >
-                            <b-col cols="5" class="text-right"
-                              >฿
-                              {{
-                                item.order.omiseVat | numeral("0,0.00")
-                              }}</b-col
-                            >
-                          </b-row>
-                          <b-row class="pb-2">
-                            <b-col cols="7">ค่าขนส่ง</b-col>
+                            <b-col cols="7">ค่าจัดส่ง</b-col>
                             <b-col cols="5" class="text-right"
                               >฿
                               {{
@@ -324,6 +287,7 @@
                               }}</b-col
                             >
                           </b-row>
+
                           <b-row class="pb-2">
                             <b-col cols="7" class="font-weight-bold"
                               >รวมสุทธิ</b-col
@@ -459,17 +423,17 @@
                 class="preview-box preview-box-slip"
                 :class="[{ pointer: slip.imageUrl }]"
                 v-bind:style="{
-                  'background-image': 'url(' + slip.imageUrl + ')',
+                  'background-image': 'url(' + slip.imageUrl + ')'
                 }"
                 @click="showPreview(slip.imageUrl)"
               ></div>
-              <!-- <div class="text-center" v-if="slip.imageUrl != null">
+              <div class="text-center" v-if="slip.imageUrl != null">
                 <span
-                  @click="downloadItem(slip.imageUrl)"
+                  @click="downloadItem(slip.referenceCode)"
                   class="text-primary text-underline pointer"
                   >Download</span
                 >
-              </div> -->
+              </div>
             </b-col>
           </b-row>
         </b-container>
@@ -549,47 +513,52 @@ export default {
       fieldsOrder: [
         {
           key: "id",
-          label: "#",
+          label: "#"
         },
         {
           key: "sku",
           label: "SKU",
-          class: "w-100px",
+          class: "w-100px"
         },
         {
           key: "productImageUrl",
           label: "ภาพประกอบ",
-          class: "w-100px",
+          class: "w-100px"
         },
         {
           key: "productName",
           label: `รายละเอียด`,
           tdClass: "text-left w-200",
-          thclass: "w-200",
+          thclass: "w-200"
         },
         {
           key: "orderItemQuantity",
-          label: `จำนวน`,
+          label: `จำนวน`
         },
         {
           key: "subtotal",
           label: `ราคา`,
-          class: "w-100px",
+          class: "w-100px"
+        },
+        {
+          key: "discount",
+          label: `ส่วนลด`,
+          class: "w-100px"
         },
         {
           key: "grandTotal",
           label: `รวม`,
-          class: "w-100px",
-        },
-      ],
+          class: "w-100px"
+        }
+      ]
     };
   },
-  created: async function () {
+  created: async function() {
     await this.getData();
     this.$isLoading = true;
   },
   methods: {
-    getData: async function () {
+    getData: async function() {
       this.isBusy = true;
 
       let resData = await this.$callApi(
@@ -625,12 +594,12 @@ export default {
         this.isDisableRejectBtn = true;
       }
     },
-    sendApproveRejectRequest: async function (status) {
+    sendApproveRejectRequest: async function(status) {
       this.$refs.modalLoading.show();
       let request = {
         transactionId: this.form.orderTransferDetail.transactionId,
         note: this.note,
-        result: status,
+        result: status
       };
 
       let data = await this.$callApi(
@@ -648,12 +617,36 @@ export default {
       if (data.result == 1) {
         this.isDisableRejectBtn = true;
         this.$refs.modalAlert.show();
+        setTimeout(() => {
+          this.$refs.modalAlert.hide();
+        }, 3000);
         this.getData();
       } else {
         this.$refs.modalAlertError.show();
       }
     },
-  },
+    downloadItem: async function(code) {
+      let data = await this.$callApi(
+        "get",
+        `${this.$baseUrl}/api/Transaction/SlipImage/` + code,
+        null,
+        this.$headers,
+        null
+      );
+
+      if (data.result == 1) {
+        var fileLink = document.createElement("a");
+
+        fileLink.href = data.detail;
+        fileLink.setAttribute(
+          "download",
+          `Slip-Image-${code}.${data.detail.split(/;|\//)[1]}`
+        );
+        document.body.appendChild(fileLink);
+        fileLink.click();
+      }
+    }
+  }
 };
 </script>
 

@@ -169,13 +169,13 @@ export default {
   padding: 0px;
 }
 .input-custom > label {
-  color: #16274a;
+  color: #333333;
   font-size: 16px;
   margin-bottom: 2px;
   font-weight: bold;
 }
 .input-custom > input {
-  color: #16274a;
+  color:#333333;
   /* background-color: white; */
   border: 1px solid #bcbcbc;
   border-radius: 0px;
@@ -197,10 +197,10 @@ export default {
 }
 :-ms-input-placeholder {
   /* Internet Explorer */
-  color:transparent;
+  color: transparent;
 }
 ::placeholder {
-  color:transparent;
+  color: transparent;
 }
 .custom-input {
   display: block;
@@ -228,7 +228,7 @@ export default {
 }
 input:disabled {
   border: 0;
-  background-color: transparent ;
+  background-color: transparent;
 }
 @media (max-width: 767.98px) {
   /* .div-input {
@@ -244,7 +244,13 @@ input:disabled {
 }
 @media (min-width: 992px) and (max-width: 1200px) {
   .input-custom > input {
-    margin-left: 25px;
+    /* margin-left: 25px; */
+  }
+}
+
+@media (max-width: 600px) {
+  .input-custom > input {
+    /* padding: 5px 0; */
   }
 }
 </style>

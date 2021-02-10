@@ -112,6 +112,7 @@
                 v-model="form.bankAccount.bankId"
                 @onDataChange="handleChangeBankName"
                 isRequired
+                :v="$v.form.bankAccount.bankId"
               />
             </b-col>
             <b-col md="6">
@@ -122,6 +123,7 @@
                 name="gold"
                 isRequired
                 v-model="form.bankAccount.accountNo"
+                :v="$v.form.bankAccount.accountNo"
               />
             </b-col>
             <b-col md="6">
@@ -132,6 +134,7 @@
                 name="platinum"
                 isRequired
                 v-model="form.bankAccount.accountName"
+                :v="$v.form.bankAccount.accountName"
               />
             </b-col>
           </b-row>
@@ -155,6 +158,7 @@
                 v-on:onFileChange="onImageChange"
                 v-on:delete="deleteImage"
                 v-model="form.bankAccount.idCardDocument"
+                :v="$v.form.bankAccount.idCardDocument"
               />
               <div
                 class="preview-box b-contain"
@@ -182,6 +186,7 @@
                 v-on:onFileChange="onBankImageChange"
                 v-on:delete="deleteBankImage"
                 v-model="form.bankAccount.bookBankDocument"
+                :v="$v.form.bankAccount.bookBankDocument"
               />
               <div
                 class="preview-box b-contain"
@@ -343,12 +348,13 @@ export default {
 
       reader.onload = async () => {
         //this.mobileImages = reader.result;
-        var images = await this.saveImagetoDb(reader.result);
+        var images = reader.result; //await this.saveImagetoDb(reader.result);
         this.isLoadingImage = false;
         this.isDisable = false;
 
         this.showPreviewIdCard = images;
         this.form.bankAccount.idCardDocument = images;
+        this.form.bankAccount.idCardDocumentFile = images;
         this.fileNameIdCard = images;
       };
     },
@@ -361,23 +367,26 @@ export default {
 
       reader.onload = async () => {
         //this.mobileImages = reader.result;
-        var images = await this.saveImagetoDb(reader.result);
+        var images = reader.result; //await this.saveImagetoDb(reader.result);
         this.isLoadingImageBank = false;
         this.isDisable = false;
 
         this.showPreviewBank = images;
-        this.form.bankAccount.BookBankDocument = images;
+        this.form.bankAccount.bookBankDocument = images;
+        this.form.bankAccount.bookBankDocumentFile = images;
         this.fileNameBank = images;
       };
     },
     deleteImage() {
       this.form.bankAccount.idCardDocument = null;
+      this.form.bankAccount.idCardDocumentFile = null;
       //this.form.bankAccount = null;
       this.fileNameIdCard = "";
       this.showPreviewIdCard = null;
     },
     deleteBankImage() {
       this.form.bankAccount.bookBankDocument = null;
+      this.form.bankAccount.bookBankDocumentFile = null;
       //this.form.bankAccount = null;
       this.fileNameBank = "";
       this.showPreviewBank = null;
@@ -406,9 +415,9 @@ export default {
           accountName: this.form.bankAccount.accountName,
           accountNo: this.form.bankAccount.accountNo,
           IDCardDocument: this.form.bankAccount.idCardDocument,
-          IDCardDocumentFile: null,
+          IDCardDocumentFile: this.form.bankAccount.idCardDocumentFile,
           BookBankDocument: this.form.bankAccount.bookBankDocument,
-          BookBankDocumentFile: null,
+          BookBankDocumentFile: this.form.bankAccount.bookBankDocumentFile,
         },
       };
 
@@ -424,7 +433,11 @@ export default {
       this.modalMessage = data.message;
       this.isDisable = false;
       if (data.result == 1) {
+        this.getData();
         this.$refs.modalAlert.show();
+        setTimeout(() => {
+            this.$refs.modalAlert.hide();
+          }, 3000);
       } else {
         this.$refs.modalAlertError.show();
       }

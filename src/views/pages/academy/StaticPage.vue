@@ -348,6 +348,9 @@ export default {
       if (data.result == 1) {
         this.modalMessage = "สำเร็จ";
         this.$refs.modalAlert.show();
+        setTimeout(() => {
+            this.$refs.modalAlert.hide();
+          }, 3000);
         this.getDatas();
       } else {
         this.$refs.modalAlertError.show();

@@ -2,18 +2,18 @@
   <div>
     <div class="min-vh-100">
       <CRow class="no-gutters px-3 px-sm-0 mb-3">
-        <b-col sm="6" class="text-center text-sm-left mb-3 mb-sm-0">
+        <b-col xl="6" class="text-center text-sm-left mb-3 mb-sm-0">
           <h1 class="mr-sm-4 header-main text-uppercase">
-            รายละเอียดรายการเกี่ยวกับการเงิน (คู่ค้า)
+            รายละเอียดรายการเกี่ยวกับการเงินพาร์ทเนอร์
           </h1>
           <!-- <b-button v-b-modal.modal-1>Launch demo modal</b-button> -->
         </b-col>
-        <b-col sm="6" class="text-right">
-          <div class="d-flex">
+        <b-col xl="6" class="text-right">
+          <div class="d-flex justify-content-end">
             <b-input-group class="panel-input-serach">
               <b-form-input
                 class="input-serach"
-                placeholder="ชื่อคู่ค้า / ID คู่ค้า"
+                placeholder="ชื่อพาร์ทเนอร์ / ID พาร์ทเนอร์"
                 v-model="filter.Search"
                 @keyup="handleSearch"
               ></b-form-input>
@@ -140,13 +140,13 @@
                   </div>
                   <div v-else class="text-danger">ไม่ใช้งาน</div>
                 </template>
-                <template v-slot:cell(id)="data">
-                  <!-- <router-link :to="'/finance/details/' + data.item.id"> -->
+                <!-- <template v-slot:cell(id)="data">
+                 
                   <b-button variant="link" class="text-primary px-1 py-0"
                     >ตรวจสอบ</b-button
                   >
-                  <!-- </router-link> -->
-                </template>
+                  
+                </template> -->
                 <template v-slot:table-busy>
                   <div class="text-center text-black my-2">
                     <b-spinner class="align-middle"></b-spinner>
@@ -198,32 +198,32 @@ export default {
       modalMessage: "",
       activeItem: "",
       requestDeleteUser: {
-        userId: null,
+        userId: null
       },
       fields: [
         {
           key: "statementNumber",
           label: "เลขที่",
-          class: "w-100px text-nowrap",
+          class: "w-100px text-nowrap"
         },
         {
           key: "sellerName",
-          label: "ชื่อคู่ค้า",
-          class: "w-100px text-nowrap",
+          label: "ชื่อพาร์ทเนอร์",
+          class: "w-100px text-nowrap"
         },
         {
           key: "grandTotal",
           label: "จำนวนเงิน",
-          class: "w-100px text-nowrap",
+          class: "w-100px text-nowrap"
         },
         {
           key: "createdTime",
           label: "วันชำระเงิน",
-          class: "w-100px text-nowrap",
+          class: "w-100px text-nowrap"
         },
         { key: "startDate", label: "รอบบิล", class: "w-100px text-nowrap" },
-        { key: "statusName", label: "สถานะ", class: "w-100px text-nowrap" },
-        { key: "id", label: "", class: "w-100px text-nowrap" },
+        { key: "statusName", label: "สถานะ", class: "w-100px text-nowrap" }
+        // { key: "id", label: "", class: "w-100px text-nowrap" },
       ],
       items: [],
       isBusy: false,
@@ -234,38 +234,38 @@ export default {
         endDate: "",
         ObjectId: this.$route.params.id,
         pageNo: 1,
-        perpage: 10,
+        perpage: 10
       },
       pageOptions: [
         { value: 10, text: "10 / หน้า" },
         { value: 30, text: "30 / หน้า" },
         { value: 50, text: "50 / หน้า" },
-        { value: 100, text: "100 / หน้า" },
+        { value: 100, text: "100 / หน้า" }
       ],
       totalRowMessage: "",
-      errorDate: false,
+      errorDate: false
     };
   },
   computed: {
-    countStartdate: function () {
+    countStartdate: function() {
       var count = 0;
       if (this.filter.startDate != "") count += 1;
       else if (count > 0) count -= 1;
       return count;
     },
-    countEnddate: function () {
+    countEnddate: function() {
       var count = 0;
 
       if (this.filter.endDate != "") count += 1;
       else if (count > 0) count -= 1;
       return count;
-    },
+    }
   },
-  created: async function () {
+  created: async function() {
     await this.getList();
   },
   methods: {
-    getList: async function () {
+    getList: async function() {
       this.isBusy = true;
       let resData = await this.$callApi(
         "post",
@@ -291,7 +291,7 @@ export default {
       this.$refs.filterSidebar.hide(true);
       this.getList();
     },
-    isActive: function (menuItem) {
+    isActive: function(menuItem) {
       return this.activeItem == menuItem;
     },
     pagination(Page) {
@@ -324,10 +324,10 @@ export default {
       this.filter.endDate = "";
       this.$refs.filterSidebar.hide(true);
       this.getList();
-    },
-  },
+    }
+  }
 };
-</script>       
+</script>
 
 <style scoped>
 .menuactive {

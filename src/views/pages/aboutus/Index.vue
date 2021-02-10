@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-container class="container-box">
+    <b-container class="container-box" v-if="$isLoading">
       <b-row class="no-gutters">
         <b-col>
           <h1 class="font-weight-bold header-main text-uppercase mb-3">
@@ -69,7 +69,7 @@
                         $v.form.staticPage.translationList.$each.$iter[index]
                           .description
                       "
-                      @onDataChange="val => (item.description = val)"
+                      @onDataChange="(val) => (item.description = val)"
                     />
                   </b-col>
                 </b-row>
@@ -92,10 +92,10 @@
           </b-col>
         </b-row>
       </div>
-      <ModalAlert ref="modalAlert" :text="modalMessage" />
-      <ModalAlertError ref="modalAlertError" :text="modalMessage" />
-      <ModalLoading ref="modalLoading" :hasClose="false" />
     </b-container>
+    <ModalAlert ref="modalAlert" :text="modalMessage" />
+    <ModalAlertError ref="modalAlertError" :text="modalMessage" />
+    <ModalLoading ref="modalLoading" :hasClose="false" />
   </div>
 </template>
 
@@ -112,7 +112,7 @@ export default {
     TextEditor,
     ModalAlert,
     ModalAlertError,
-    ModalLoading
+    ModalLoading,
   },
   data() {
     return {
@@ -148,7 +148,7 @@ export default {
           ],
         },
       },
-      dataReady: false
+      dataReady: false,
     };
   },
   validations: {
@@ -163,12 +163,13 @@ export default {
       },
     },
   },
-  created: async function() {
+  created: async function () {
     this.$isLoading = false;
     await this.getDatas();
+    await this.changeLanguage(1, 0);
   },
   methods: {
-    isNumber: function(evt) {
+    isNumber: function (evt) {
       evt = evt ? evt : window.event;
       var charCode = evt.which ? evt.which : evt.keyCode;
       if (charCode > 31 && (charCode < 48 || charCode > 57)) {
@@ -177,30 +178,21 @@ export default {
         return true;
       }
     },
-    onUrlkeyChange: function() {
+    onUrlkeyChange: function () {
       this.form.staticPage.urlKey = this.form.staticPage.urlKey
         .replace(/ /g, "-")
         .replace(/\//g, "");
     },
-    setUrlKey: function(name) {
+    setUrlKey: function (name) {
       if (this.id == 0) {
         this.form.staticPage.urlKey = name
           .replace(/ /g, "-")
           .replace(/\//g, "");
       }
     },
-    handleCloseModal: function() {
-      if (this.flag == 1) {
-        window.location.href = "/other";
-      } else {
-        if (this.id > 0) {
-          this.getDatas();
-        } else {
-          window.location.href = "/other";
-        }
-      }
-    },
-    getDatas: async function() {
+    getDatas: async function () {
+      this.$isLoading = false;
+
       let languages = await this.$callApi(
         "get",
         `${this.$baseUrl}/api/language `,
@@ -211,7 +203,6 @@ export default {
 
       if (languages.result == 1) {
         this.languageList = languages.detail;
-        this.changeLanguage(1, 0);
       }
 
       let data = await this.$callApi(
@@ -232,29 +223,32 @@ export default {
 
         if (this.form.staticPage.isSameLanguage) {
           this.imageLogoLang = "";
+          this.languageActive = this.form.staticPage.mainLanguageId;
         } else {
           var index = this.languageList
-            .map(function(x) {
+            .map(function (x) {
               return x.id;
             })
-            .indexOf(this.languageActive);
+            .indexOf(this.form.staticPage.mainLanguageId);
           this.imageLogoLang = this.languageList[index].imageUrl;
         }
-        
+
         this.$isLoading = true;
       }
     },
     changeLanguage(id, index) {
-      this.languageActive = id;
-      this.imageLogoLang = this.languageList[index].imageUrl;
+      if (!this.form.staticPage.isSameLanguage) {
+        this.languageActive = id;
+        this.imageLogoLang = this.languageList[index].imageUrl;
+      }
     },
-    useSameLanguage: async function() {
+    useSameLanguage: async function () {
       Vue.nextTick(() => {
         if (this.form.staticPage.isSameLanguage) {
           this.imageLogoLang = "";
           this.form.staticPage.mainLanguageId = this.languageActive;
           let data = this.form.staticPage.translationList.filter(
-            val => val.languageId == this.form.staticPage.mainLanguageId
+            (val) => val.languageId == this.form.staticPage.mainLanguageId
           );
 
           if (this.id == 0) {
@@ -273,14 +267,14 @@ export default {
           }
         } else {
           var index = this.languageList
-            .map(function(x) {
+            .map(function (x) {
               return x.id;
             })
             .indexOf(this.languageActive);
           this.imageLogoLang = this.languageList[index].imageUrl;
 
           let data = this.form.staticPage.translationList.filter(
-            val => val.languageId != this.form.staticPage.mainLanguageId
+            (val) => val.languageId != this.form.staticPage.mainLanguageId
           );
 
           if (this.id == 0) {
@@ -293,7 +287,7 @@ export default {
         }
       });
     },
-    checkValidateTranslationList: async function() {
+    checkValidateTranslationList: async function () {
       let isError = false;
       this.languageList.forEach((element, index) => {
         if (!isError) {
@@ -311,7 +305,7 @@ export default {
         }
       });
     },
-    checkForm: async function(flag) {
+    checkForm: async function (flag) {
       if (this.form.staticPage.isSameLanguage) {
         await this.useSameLanguage();
       }
@@ -324,7 +318,7 @@ export default {
       this.flag = flag;
       this.submit();
     },
-    submit: async function() {
+    submit: async function () {
       this.isDisable = true;
       this.$refs.modalLoading.show();
 
@@ -343,6 +337,9 @@ export default {
       if (data.result == 1) {
         this.modalMessage = "สำเร็จ";
         this.$refs.modalAlert.show();
+        setTimeout(() => {
+          this.$refs.modalAlert.hide();
+        }, 3000);
         this.getDatas();
       } else {
         this.$refs.modalAlertError.show();
@@ -358,21 +355,6 @@ export default {
       // }
 
       // this.isDisable = false;
-    },
-    deleteData: async function() {
-      if (confirm("Are you sure you want to delete this data?") == true) {
-        let data = await this.$callApi(
-          "delete",
-          `${this.$baseUrl}/api/staticPage/remove/${this.id}`,
-          null,
-          this.$headers,
-          null
-        );
-
-        if (data.result == 1) {
-          window.location.href = "/other";
-        }
-      }
     },
   },
 };

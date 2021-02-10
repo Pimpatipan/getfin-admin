@@ -6,7 +6,7 @@
           <h1 class="mr-sm-4 header-main text-uppercase">รายการรอการตรวจสอบ</h1>
         </b-col>
         <b-col xl="6" class="text-right">
-          <div class="d-flex">
+          <div class="d-flex justify-content-end">
             <b-input-group class="panel-input-serach">
               <b-form-input
                 class="input-serach"
@@ -142,6 +142,7 @@
               <template v-slot:cell(total)="data">
                 <span> {{ data.item.total | numeral("0,0.00") }} </span>
               </template>
+
               <template v-slot:cell(status)="data">
                 <div v-if="data.item.statusId == 2" class="text-success">
                   {{ data.item.status }}
@@ -246,17 +247,17 @@
                 class="preview-box preview-box-slip"
                 :class="[{ pointer: slip.imageUrl }]"
                 v-bind:style="{
-                  'background-image': 'url(' + slip.imageUrl + ')',
+                  'background-image': 'url(' + slip.imageUrl + ')'
                 }"
                 @click="showPreview(slip.imageUrl)"
               ></div>
-              <!-- <div class="text-center" v-if="slip.imageUrl != null">
+              <div class="text-center" v-if="slip.imageUrl != null">
                 <span
-                  @click="downloadItem(slip.imageUrl)"
+                  @click="downloadItem(slip.referenceCode)"
                   class="text-primary text-underline pointer"
                   >Download</span
                 >
-              </div> -->
+              </div>
             </b-col>
           </b-row>
         </b-container>
@@ -380,7 +381,7 @@ export default {
     InputTextArea,
     ModalAlert,
     ModalAlertError,
-    ModalLoading,
+    ModalLoading
   },
   data() {
     return {
@@ -389,34 +390,34 @@ export default {
       activeItem: "",
       note: "",
       requestDeleteUser: {
-        userId: null,
+        userId: null
       },
       fields: [
         {
           key: "createdTime",
           label: `วันที่ทำรายการ`,
-          class: "w-100px",
+          class: "w-100px"
         },
         {
           key: "referenceCode",
           label: `เลขที่คำขอ`,
-          class: "w-100px",
+          class: "w-100px"
         },
         {
           key: "total",
           label: `จำนวนเงิน`,
-          class: "w-100px",
+          class: "w-100px"
         },
         {
           key: "status",
           label: `สถานะคำขอ`,
-          class: "w-100px",
+          class: "w-100px"
         },
         {
           key: "transactionId",
           label: "",
-          class: "w-200",
-        },
+          class: "w-200"
+        }
       ],
       items: [],
       isBusy: false,
@@ -429,44 +430,44 @@ export default {
         endDate: null,
         ReferenceCode: "",
         GrandTotal: "",
-        Status: [],
+        Status: []
       },
       pageOptions: [
         { value: 10, text: `10 / ${this.$t("page")}` },
         { value: 30, text: `30 / ${this.$t("page")}` },
         { value: 50, text: `50 / ${this.$t("page")}` },
-        { value: 100, text: `100 / ${this.$t("page")}` },
+        { value: 100, text: `100 / ${this.$t("page")}` }
       ],
       totalRowMessage: "",
       img: "",
       isBusy: false,
       isDisable: false,
       slip: null,
-      errorDate: false,
+      errorDate: false
     };
   },
   computed: {
-    countStartdate: function () {
+    countStartdate: function() {
       var count = 0;
       if (this.filter.startDate != "") count += 1;
       else if (count > 0) count -= 1;
       return count;
     },
-    countEnddate: function () {
+    countEnddate: function() {
       var count = 0;
 
       if (this.filter.endDate != "") count += 1;
       else if (count > 0) count -= 1;
       return count;
-    },
+    }
   },
-  created: async function () {
+  created: async function() {
     await this.getStatusList();
     await this.getList();
     this.$isLoading = true;
   },
   methods: {
-    getStatusList: async function () {
+    getStatusList: async function() {
       let status = await this.$callApi(
         "get",
         `${this.$baseUrl}/api/Transaction/OrderTransferStatusWithCount`,
@@ -480,7 +481,7 @@ export default {
         this.activeItem = status.detail[0].id;
       }
     },
-    getList: async function () {
+    getList: async function() {
       this.isBusy = true;
       let resData = await this.$callApi(
         "post",
@@ -508,7 +509,7 @@ export default {
       this.$refs.filterSidebar.hide(true);
       this.getList();
     },
-    isActive: function (menuItem) {
+    isActive: function(menuItem) {
       return this.activeItem == menuItem;
     },
     getDataByClickStatus(status, id) {
@@ -568,13 +569,13 @@ export default {
         this.isDisableRejectBtn = true;
       }
     },
-    sendApproveRejectRequest: async function (status) {
+    sendApproveRejectRequest: async function(status) {
       this.$refs.modalLoading.show();
 
       let request = {
         transactionId: this.slip.transactionId,
         note: this.note,
-        result: status,
+        result: status
       };
 
       let data = await this.$callApi(
@@ -593,15 +594,39 @@ export default {
       if (data.result == 1) {
         this.isDisableRejectBtn = true;
         this.$refs.modalAlert.show();
+        setTimeout(() => {
+          this.$refs.modalAlert.hide();
+        }, 3000);
         this.getStatusList();
         this.getList();
       } else {
         this.$refs.modalAlertError.show();
       }
     },
-  },
+    downloadItem: async function(code) {
+      let data = await this.$callApi(
+        "get",
+        `${this.$baseUrl}/api/Transaction/SlipImage/` + code,
+        null,
+        this.$headers,
+        null
+      );
+
+      if (data.result == 1) {
+        var fileLink = document.createElement("a");
+
+        fileLink.href = data.detail;
+        fileLink.setAttribute(
+          "download",
+          `Slip-Image-${code}.${data.detail.split(/;|\//)[1]}`
+        );
+        document.body.appendChild(fileLink);
+        fileLink.click();
+      }
+    }
+  }
 };
-</script>       
+</script>
 
 <style scoped>
 .menuactive {

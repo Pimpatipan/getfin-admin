@@ -277,7 +277,7 @@ export default {
         },
         {
           key: "questionBy",
-          label: "รายละเอียดคู่ค้า",
+          label: "รายละเอียดพาร์ทเนอร์",
           class: "w-100px",
         },
         {

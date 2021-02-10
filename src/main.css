@@ -24,7 +24,7 @@
 }
 
 .c-sidebar-nav {
-    font-size: 14px;
+    font-size: 13px;
 }
 
 .breadcrumb {
@@ -70,11 +70,15 @@
 }
 
 .c-sidebar-nav-dropdown.c-show>.c-sidebar-nav-dropdown-items {
-    background: #f1f1f1;
+    background: #dcdcdc;
 }
 
 .template-color-green, .c-header-toggler-icon {
     color: #092D53 !important;
+}
+
+.c-sidebar-nav-dropdown-items .c-sidebar-nav-dropdown {
+    background-color: #dcdcdc;
 }
 
 a {
@@ -264,9 +268,9 @@ h1 {
     font-weight: bold;
 }
 
-p {
+div, p {
     white-space: normal;
-    word-break: break-all;
+    /* word-break: break-word; */
 }
 
 .btn-delete {
@@ -328,8 +332,8 @@ p {
 }
 
 .page-item.active .page-link {
-    background-color: #092D53;
-    border-color: #092D53;
+    background-color: #646467;;
+    border-color: #646467;;
 }
 
 .page-item .page-link {
@@ -351,6 +355,7 @@ p {
 
 .panel-input-serach {
     color: #092D53 !important;
+    max-width: 350px;
 }
 
 .panel-input-serach:focus-within {
@@ -472,6 +477,22 @@ input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer
     padding-bottom: 50%;
 }
 
+.ratio-4-3-pb {
+    padding-bottom: 75% !important;
+}
+
+.ratio-4-3-pt {
+    padding-top: 75% !important;
+}
+
+.ratio-16-9-pb {
+    padding-bottom: 42.9% !important;
+}
+
+.ratio-16-9-pt {
+    padding-top: 42.9% !important;
+}
+
 .collapse-btn, .collapse-btn:hover {
     width: 100%;
     text-align: left;
@@ -571,7 +592,7 @@ input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer
 .btn-main, .btn-mains button {
     background-color: #092D53 !important;
     color: #FFFFFF !important;
-    width: 140px;
+    min-width: 150px;
     font-weight: bold;
     transition: 0.3s;
     border-radius: 0;
@@ -699,7 +720,7 @@ input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer
 .custom-checkbox.b-custom-control-lg>label, .input-group-lg .custom-checkbox>label {
     font-size: 17px;
     color: #16274a;
-    line-height: 1.8;
+    line-height: 2;
 }
 
 .pl-lv4-cb {
@@ -762,15 +783,20 @@ input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer
 
 .btn-group-status button {
     background-color: transparent;
-    border: none;
     padding-left: 0;
-    padding-right: 20px !important;
     white-space: nowrap;
+    margin-right: 10px;
+    border-top: 0;
+    border-bottom: 0;
+    border-left: 0;
+    border-radius: 0;
 }
 
 .btn-group-status button:focus, .btn-group-status button:hover, .btn-group-status button:active {
     background-color: transparent !important;
-    border: none;
+    border-top: 0;
+    border-bottom: 0;
+    border-left: 0;
     padding-left: 0;
     color: #FFB300 !important;
     text-decoration: underline !important;
@@ -898,6 +924,16 @@ table td, .table th {
 
 .nowrap {
     white-space: nowrap;
+}
+
+.breakword {
+    word-break: break-word;
+}
+
+@media (max-width: 1200px) {
+    .panel-input-serach {
+        max-width: 100%;
+    }
 }
 
 @media (max-width: 767px) {

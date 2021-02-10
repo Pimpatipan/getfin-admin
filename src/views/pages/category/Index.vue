@@ -22,15 +22,13 @@
 
     <div class="bg-white p-3 mt-2">
       <b-row class="align-items-end mb-4">
-        <b-col md="3">
+        <b-col>
           <h1 class="font-weight-bold header-main text-uppercase mb-md-0">
             ข้อมูลหมวดหมู่
           </h1>
-        </b-col>
-        <b-col md="5">
           <div
             v-if="dataCategoryHierarchy.breadcrumb.length"
-            class="text-black-50"
+            class="text-black-50 mt-2"
           >
             (
             <span v-for="(item, index) in selectCategory" v-bind:key="index">
@@ -46,7 +44,7 @@
             )
           </div>
         </b-col>
-        <b-col md="4" class="text-right">
+        <b-col lg="6" offset-lg="6" class="text-right mt-3 mt-lg-0">
           <div class="panel">
             <b-form-checkbox
               size="lg"
@@ -91,7 +89,7 @@
                 $v.form.category.translationList.$each.$iter[index].name.$error
               "
               :v="$v.form.category.translationList.$each.$iter[index].name"
-              @onKeyup="setUrlKey(item.name, item.languageId)"
+              @onKeyup="setUrlKey(item.name, index)"
             />
           </div>
         </b-col>
@@ -192,7 +190,7 @@ export default {
     CategoryHierarchy,
     ModalAlert,
     ModalAlertError,
-    ModalLoading
+    ModalLoading,
   },
   validations: {
     form: {
@@ -225,7 +223,7 @@ export default {
       form: {
         category: {
           id: 0,
-          sortOrder: 0,
+          sortOrder: 1,
           urlKey: "",
           mainLanguageId: 0,
           isSameLanguage: false,
@@ -334,6 +332,7 @@ export default {
       );
       if (data.result == 1) {
         this.form = { ...data.detail };
+        if (categoryId == 0) this.form.category.sortOrder = 1;
       }
     },
     changeLanguage(id, index) {
@@ -387,6 +386,9 @@ export default {
       if (data.result == 1) {
         this.modalMessage = data.message;
         this.$refs.modalAlert.show();
+        setTimeout(() => {
+            this.$refs.modalAlert.hide();
+          }, 3000);
         await this.getDatas();
 
         if (this.form.category.id == 0)
@@ -426,12 +428,17 @@ export default {
         }
       });
     },
-    setUrlKey: function (value, languageId) {
-      if (
-        (!this.form.category.isSameLanguage && languageId == 1) ||
-        this.form.category.isSameLanguage
-      )
-        this.form.category.urlKey = value.replace(/ /g, "-");
+    setUrlKey: function (name, index) {
+      // if (
+      //   (!this.form.category.isSameLanguage && languageId == 1) ||
+      //   this.form.category.isSameLanguage
+      // )
+      //   this.form.category.translationList = value.replace(/ /g, "-");
+
+      this.form.category.translationList[index].metaTitle = name;
+      this.form.category.translationList[index].metaKeyword = name;
+      this.form.category.translationList[index].metaDescription = name;
+      this.form.category.urlKey = name.replace(/ /g, "-").replace(/\//g, "");
     },
   },
 };

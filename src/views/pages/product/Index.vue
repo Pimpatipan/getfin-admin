@@ -7,7 +7,7 @@
         </b-col>
         <b-col lg="8" class="text-right">
           <div class="d-block d-sm-flex">
-            <div class="d-flex w-100">
+            <div class="d-flex justify-content-end w-100">
               <b-input-group class="panel-input-serach">
                 <b-form-input
                   class="input-serach"
@@ -167,7 +167,7 @@
                 </a>
                 <!-- <a
                   :href="
-                    'http://getfin.dosetech.co/product/' + data.item.urlKey
+                    'http://getfin.me/product/' + data.item.urlKey
                   "
                   target="_blank"
                   class="text-dark"
@@ -426,6 +426,9 @@ export default {
       this.modalMessage = resData.message;
       if (resData.result == 1) {
         this.$refs.modalAlert.show();
+        setTimeout(() => {
+            this.$refs.modalAlert.hide();
+          }, 3000);
         this.filter.Page = 1;
         await this.getList();
       } else {

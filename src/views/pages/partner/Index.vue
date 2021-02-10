@@ -2,13 +2,13 @@
   <div>
     <div class="min-vh-100">
       <CRow class="no-gutters px-3 px-sm-0">
-        <b-col sm="6" class="text-center text-sm-left mb-3 mb-sm-0">
+        <b-col sm="7" class="text-center text-sm-left mb-3 mb-sm-0">
           <h1 class="mr-sm-4 header-main text-uppercase">
             จัดการรายการพาร์ทเนอร์ของเรา
           </h1>
         </b-col>
-        <b-col sm="6" class="text-right">
-          <div class="d-flex">
+        <b-col sm="5" class="text-right">
+          <div class="d-flex justify-content-end">
             <b-input-group class="panel-input-serach">
               <b-form-input
                 class="input-serach"
@@ -88,7 +88,7 @@
         </div>
       </b-sidebar>
 
-       <b-row class="mt-3 no-gutters mx-3 mx-sm-0">
+       <b-row class="no-gutters mx-3 mx-sm-0">
         <b-col class="label-text pt-2">
           <b-form-checkbox
             size="lg"

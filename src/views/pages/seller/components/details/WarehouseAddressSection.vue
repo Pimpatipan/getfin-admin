@@ -130,33 +130,16 @@
               />
             </b-col>
           </b-row>
-          <b-row class="">
-            <b-col>
-              <InputText
-                classLabelName="col-lg-4 my-auto"
-                classInputName="col-lg-6"
-                textFloat="อีเมล"
-                placeholder="อีเมล"
-                type="text"
-                name="email"
-                v-model="form.userWarehouseAddress.email"
-                :disabled="true"
-              />
-            </b-col>
-          </b-row>
           <b-row class="my-4">
             <b-col class="d-flex justify-content-end"
               ><div class="w-100"><hr /></div
             ></b-col>
           </b-row>
           <b-row>
-            <b-col cols="6">
+            <b-col cols="12">
               <label class="font-weight-bold"
                 >กรุณาบอกเหตุผลในการปฏิเสธข้อมูล</label
               >
-            </b-col>
-            <b-col cols="6" class="text-right">
-              <label class="font-weight-bold">{{ new Date(dataLog.updatedTime) | moment($formatDate) }}</label>
             </b-col>
             <div class="px-3">
               <p>{{ dataLog.warningLog.note }}</p>

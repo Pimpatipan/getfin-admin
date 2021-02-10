@@ -6,10 +6,11 @@
       hide-header
       hide-footer
       centered
+      no-close-on-backdrop
     >
-      <div class="modal-header">
+      <!-- <div class="modal-header">
         <button type="button" aria-label="Close" class="close" @click="hide">×</button>
-      </div>
+      </div> -->
       <div class="text-center">
         <img src="@/assets/images/icons/icon-check.png" alt="success" class="mb-3 img" />
         <p class="text-text" v-if="text">{{ text }}</p>

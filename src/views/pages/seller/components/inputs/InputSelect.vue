@@ -124,13 +124,13 @@ export default {
   border-color: red !important;
 }
 .select-custom > label {
-  color: #16274a;
+  color: #333333;
   font-size: 16px;
   margin-bottom: 2px;
   font-weight: bold;
 }
 ::v-deep .btn-select {
-  color: #16274a;
+  color: #333333;
   background-color: white;
   border: 1px solid #bcbcbc;
   border-radius: 0px;
@@ -142,18 +142,18 @@ export default {
   font-size: 1rem;
 }
 ::v-deep .btn-select:focus {
-  border-color: #16274a;
+  border-color: #333333;
   /* border-color: #80c141; */
 }
 ::v-deep .btn-select > option {
   background-color: white;
-  color: #16274a;
+  color: #333333;
 }
 ::v-deep .btn-select > option:checked {
-  /* background-color: #16274a !important;  */
+  /* background-color: #333333 !important;  */
   /* background-color: #80c141 !important; */
   /* color: white !important; */
-  color: #16274a !important;
+  color: #333333 !important;
 }
 ::v-deep .btn-select:focus {
   box-shadow: unset !important;
@@ -172,7 +172,7 @@ export default {
 }
 @media (min-width: 992px) and (max-width: 1200px) {
   .select-custom > select {
-    margin-left: 25px;
+    /* margin-left: 25px; */
   }
 }
 </style>

@@ -55,7 +55,7 @@
                         class="px-4 login-btn"
                         @click="checkForm"
                         :disabled="isDisable"
-                        >Login</b-button
+                        >Login  <b-spinner class="align-middle w-1rem" v-if="isLogin"></b-spinner></b-button
                       >
                     </c-col>
                   </b-row>
@@ -89,6 +89,7 @@ export default {
       },
       isLoading: false,
       isDisable: false,
+      isLogin: false,
     };
   },
   validations() {
@@ -105,7 +106,7 @@ export default {
   methods: {
     getLogo: async function () {
       let resData = await this.$callApi(
-       "get",
+        "get",
         `${this.$baseUrl}/api/setting/getLogo`,
         null,
         this.$headers,
@@ -119,6 +120,7 @@ export default {
 
       this.isLoading = true;
       this.isDisable = true;
+      this.isLogin = true;
       this.error = "";
       let data = await this.$callApi(
         "post",
@@ -129,8 +131,13 @@ export default {
       );
       this.isLoading = false;
       this.isDisable = false;
+      this.isLogin = false;
       if (data.result == 1) {
-        await this.$cookies.set("admin-token", data.detail.token, 60 * 60 * 24 * 30);
+        await this.$cookies.set(
+          "admin-token",
+          data.detail.token,
+          60 * 60 * 24 * 30
+        );
         await this.$cookies.set(
           "username",
           data.detail.userDetail.firstname +
@@ -151,3 +158,10 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.w-1rem {
+  width: 1rem;
+  height: 1rem;
+}
+</style>

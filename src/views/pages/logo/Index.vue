@@ -17,7 +17,7 @@
         </b-row> -->
 
         <b-row>
-          <b-col md="6">
+          <b-col xl="6">
             <UploadFile
               textFloat="โลโก้"
               placeholder="กรุณาเลือกไฟล์เพื่ออัพโหลด"
@@ -154,9 +154,9 @@ export default {
       this.$refs.modalLoading.hide();
       if (data.result == 1) {
         this.$refs.modalAlert.show();
-          setTimeout(function () {
-          location.reload();
-        }, 3000);
+    setTimeout(() => {
+            this.$refs.modalAlert.hide();
+          }, 3000);
       } else {
         this.modalMessage = data.detail[0];
         this.$refs.modalAlertError.show();

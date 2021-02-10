@@ -74,7 +74,7 @@
                       <span> :</span>
                     </label>
                   </div>
-                  <div class="col-lg-6 pl-2 pt-1">
+                  <div class="col-lg-6 pl-0 pl-sm-2 pt-1">
                     {{ form.businessInformation.provinceName }}
                   </div>
                 </div>
@@ -91,7 +91,7 @@
                       <span> :</span>
                     </label>
                   </div>
-                  <div class="col-lg-6 pl-2 pt-1">
+                  <div class="col-lg-6 pl-0 pl-sm-2 pt-1">
                     {{ form.businessInformation.districtName }}
                   </div>
                 </div>
@@ -108,7 +108,7 @@
                       <span> :</span>
                     </label>
                   </div>
-                  <div class="col-lg-6 pl-2 pt-1">
+                  <div class="col-lg-6 pl-0 pl-sm-2 pt-1">
                     {{ form.businessInformation.subdistrictName }}
                   </div>
                 </div>
@@ -143,7 +143,7 @@
                       <span> :</span>
                     </label>
                   </div>
-                  <div class="col-lg-6 pl-2 pt-1">
+                  <div class="col-lg-6 pl-0 pl-sm-2 pt-1">
                     {{
                       form.businessInformation.businessInformationDocument.split(
                         "/"
@@ -174,7 +174,7 @@
                       <span> :</span>
                     </label>
                   </div>
-                  <div class="col-lg-6 pl-2 pt-1">
+                  <div class="col-lg-6 pl-0 pl-sm-2 pt-1">
                     {{
                       form.businessInformation.taxRegistrationDocument.split(
                         "/"
@@ -205,7 +205,7 @@
                       <span> :</span>
                     </label>
                   </div>
-                  <div class="col-lg-6 pl-2 pt-1">
+                  <div class="col-lg-6 pl-0 pl-sm-2 pt-1">
                     {{ form.businessInformation.companyProvinceName }}
                   </div>
                 </div>
@@ -228,13 +228,10 @@
             ></b-col>
           </b-row>
           <b-row>
-            <b-col cols="6">
+            <b-col cols="12">
               <label class="font-weight-bold"
                 >กรุณาบอกเหตุผลในการปฏิเสธข้อมูล</label
               >
-            </b-col>
-            <b-col cols="6" class="text-right">
-              <label class="font-weight-bold">{{ new Date(dataLog.updatedTime) | moment($formatDate) }}</label>
             </b-col>
             <div class="px-3">
               <p>{{ dataLog.warningLog.note }}</p>

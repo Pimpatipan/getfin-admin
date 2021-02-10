@@ -197,7 +197,9 @@
               <template v-slot:cell(id)="data">
                 <div class="d-flex justify-content-center">
                   <router-link
-                    :to="{ path: '/faq/details/question/' + data.item.id }"
+                    :to="{
+                      path: '/faq' + path + '/details/question/' + data.item.id,
+                    }"
                   >
                     <b-button variant="link" class="text-dark px-1 py-0">
                       <!-- <font-awesome-icon icon="pencil-alt" title="Edit" /> -->
@@ -233,12 +235,11 @@
               @click="openModalDelete(form.faqTopic.translationList[0].name)"
               >ลบ</b-button
             >
-            <b-button
-              href="/faq"
-              :disabled="isDisable"
-              class="btn-details-set btn-cancel"
-              >ย้อนกลับ</b-button
-            >
+            <router-link :to="'/faq' + path">
+              <b-button :disabled="isDisable" class="btn-details-set btn-cancel"
+                >ย้อนกลับ</b-button
+              >
+            </router-link>
           </b-col>
           <b-col md="6" class="text-sm-right">
             <button
@@ -303,7 +304,7 @@ export default {
     ModalAlert,
     ModalAlertError,
     ModalAlertConfirm,
-    ModalLoading
+    ModalLoading,
   },
   data() {
     return {
@@ -339,10 +340,12 @@ export default {
         {
           key: "updatedTime",
           label: "วันที่ทำการอัพเดท",
+          class: "w-100px",
         },
         {
           key: "status",
           label: "สถานะ",
+          class: "w-100px",
         },
         {
           key: "id",
@@ -356,6 +359,7 @@ export default {
           enabled: true,
           sortOrder: 2,
           mainLanguageId: 0,
+          IsPartner: false,
           isSameLanguage: false,
           translationList: [
             {
@@ -371,6 +375,9 @@ export default {
           ],
         },
       },
+      path: "",
+      faqTypeName: "",
+      isPartner: false,
     };
   },
   validations: {
@@ -386,12 +393,25 @@ export default {
       },
     },
   },
-  created: async function() {
+  created: async function () {
+    await this.checkType();
     await this.getDatas();
     await this.getQuestionList();
+    await this.changeLanguage(1, 0);
   },
   methods: {
-    isNumber: function(evt) {
+    checkType: async function () {
+      if (window.location.href.includes("partner")) {
+        this.isPartner = true;
+        this.path = "/partner";
+        this.faqTypeName = "พาร์ทเนอร์";
+      } else {
+        this.isPartner = false;
+        this.path = "";
+        this.faqTypeName = "";
+      }
+    },
+    isNumber: function (evt) {
       evt = evt ? evt : window.event;
       var charCode = evt.which ? evt.which : evt.keyCode;
       if (charCode > 31 && (charCode < 48 || charCode > 57)) {
@@ -400,34 +420,18 @@ export default {
         return true;
       }
     },
-    handleCloseModal: function() {
-      if (this.flag == 1) {
-        window.location.href = "/faq";
-      } else {
-        if (this.id > 0) {
-          this.getDatas();
-        } else {
-          this.form.faqTopic.id = this.existId;
-          this.id = this.existId;
-          this.$cookies.set("faq_topic_id", this.id, 60 * 60 * 24 * 30);
-          this.isEdit = true;
-          this.$router.push({ path: `/faq/details/${this.existId}` });
-        }
-      }
-    },
-    getDatas: async function() {
+    getDatas: async function () {
       this.isLoadingData = true;
 
       let languages = await this.$callApi(
         "get",
-         `${this.$baseUrl}/api/language `,
+        `${this.$baseUrl}/api/language `,
         null,
         this.$headers,
         null
       );
       if (languages.result == 1) {
         this.languageList = languages.detail;
-        this.changeLanguage(1, 0);
       }
 
       let data = await this.$callApi(
@@ -449,21 +453,22 @@ export default {
 
         if (this.form.faqTopic.isSameLanguage) {
           this.imageLogoLang = "";
+          this.languageActive = this.form.faqTopic.mainLanguageId;
         } else {
           var index = this.languageList
-            .map(function(x) {
+            .map(function (x) {
               return x.id;
             })
-            .indexOf(this.languageActive);
+            .indexOf(this.form.faqTopic.mainLanguageId);
           this.imageLogoLang = this.languageList[index].imageUrl;
         }
 
-         this.$isLoading = true;
+        this.$isLoading = true;
       }
 
       await this.$cookies.set("faq_topic_id", this.id, 60 * 60 * 24 * 30);
     },
-    getQuestionList: async function() {
+    getQuestionList: async function () {
       this.isBusy = true;
 
       let question = await this.$callApi(
@@ -481,10 +486,12 @@ export default {
       this.isBusy = false;
     },
     changeLanguage(id, index) {
-      this.languageActive = id;
-      this.imageLogoLang = this.languageList[index].imageUrl;
+      if (!this.form.faqTopic.isSameLanguage) {
+        this.languageActive = id;
+        this.imageLogoLang = this.languageList[index].imageUrl;
+      }
     },
-    checkForm: async function(flag) {
+    checkForm: async function (flag) {
       if (this.form.faqTopic.isSameLanguage) {
         await this.useSameLanguage();
       }
@@ -497,8 +504,9 @@ export default {
       this.flag = flag;
       this.submit();
     },
-    submit: async function() {
+    submit: async function () {
       this.isDisable = true;
+      this.form.faqTopic.IsPartner = this.isPartner;
       this.$refs.modalLoading.show();
 
       let data = await this.$callApi(
@@ -516,17 +524,22 @@ export default {
         this.$refs.modalAlert.show();
 
         if (this.flag == 1) {
-          setTimeout(function() {
-            window.location.href = "/faq";
+          setTimeout(() => {
+            this.$router.push({ path: `/faq` + this.path });
           }, 3000);
         } else {
+          setTimeout(() => {
+            this.$refs.modalAlert.hide();
+          }, 3000);
           if (this.id > 0) {
             this.getDatas();
           } else {
             this.form.faqTopic.id = this.existId;
             this.id = this.existId;
             this.isEdit = true;
-            this.$router.push({ path: `/faq/details/${this.existId}` });
+            this.$router.push({
+              path: `/faq${this.path}/details/${this.existId}`,
+            });
             this.getDatas();
           }
         }
@@ -536,13 +549,13 @@ export default {
 
       this.isDisable = false;
     },
-    useSameLanguage: async function() {
+    useSameLanguage: async function () {
       Vue.nextTick(() => {
         if (this.form.faqTopic.isSameLanguage) {
           this.imageLogoLang = "";
           this.form.faqTopic.mainLanguageId = this.languageActive;
           let data = this.form.faqTopic.translationList.filter(
-            val => val.languageId == this.form.faqTopic.mainLanguageId
+            (val) => val.languageId == this.form.faqTopic.mainLanguageId
           );
 
           if (this.id == 0) {
@@ -561,14 +574,14 @@ export default {
           }
         } else {
           var index = this.languageList
-            .map(function(x) {
+            .map(function (x) {
               return x.id;
             })
             .indexOf(this.languageActive);
           this.imageLogoLang = this.languageList[index].imageUrl;
 
           let data = this.form.faqTopic.translationList.filter(
-            val => val.languageId != this.form.faqTopic.mainLanguageId
+            (val) => val.languageId != this.form.faqTopic.mainLanguageId
           );
           if (this.id == 0) {
             if (data.length == 1) {
@@ -580,7 +593,7 @@ export default {
         }
       });
     },
-    checkValidateTranslationList: async function() {
+    checkValidateTranslationList: async function () {
       let isError = false;
       this.languageList.forEach((element, index) => {
         if (!isError) {
@@ -601,8 +614,9 @@ export default {
       this.modalMessage = "คุณต้องการลบ " + value + " ใช่หรือไม่?";
       this.$refs.isModalAlertConfirm.show();
     },
-    btnDelete: async function() {
+    btnDelete: async function () {
       this.$refs.isModalAlertConfirm.hide();
+      this.$refs.modalLoading.show();
       let resData = await this.$callApi(
         "delete",
         `${this.$baseUrl}/api/FAQ/removeTopic/${this.id}`,
@@ -611,10 +625,13 @@ export default {
         null
       );
       this.modalMessage = resData.message;
+      this.$refs.modalLoading.hide();
       if (resData.result == 1) {
         this.$refs.modalAlert.show();
-        setTimeout(function() {
-          window.location.href = "/faq";
+        setTimeout(() => {
+          this.$router.push({
+            path: `/faq` + this.path,
+          });
         }, 3000);
       } else {
         this.$refs.modalAlertError.show();
@@ -625,7 +642,7 @@ export default {
       this.modalMessage = "คุณต้องการลบ " + value.question + " ใช่หรือไม่?";
       this.$refs.isModalAlertConfirmQuetion.show();
     },
-    btnDeleteQuetion: async function() {
+    btnDeleteQuetion: async function () {
       this.$refs.isModalAlertConfirmQuetion.hide();
       let resData = await this.$callApi(
         "delete",
@@ -637,27 +654,15 @@ export default {
       this.modalMessage = resData.message;
       if (resData.result == 1) {
         this.$refs.modalAlert.show();
+        setTimeout(() => {
+          this.$refs.modalAlert.hide();
+        }, 3000);
         this.getQuestionList();
       } else {
         this.$refs.modalAlertError.show();
       }
     },
-    deleteData: async function() {
-      if (confirm("Are you sure you want to delete this data?") == true) {
-        let data = await this.$callApi(
-          "delete",
-          `${this.$baseUrl}/api/FAQ/removeTopic/${this.id}`,
-          null,
-          this.$headers,
-          null
-        );
-
-        if (data.result == 1) {
-          window.location.href = "/faq";
-        }
-      }
-    },
-    deleteQuestion: async function(id) {
+    deleteQuestion: async function (id) {
       if (confirm("Are you sure you want to delete this data?") == true) {
         let data = await this.$callApi(
           "delete",

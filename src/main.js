@@ -38,6 +38,9 @@ import { Datetime } from "vue-datetime";
 import "vue-datetime/dist/vue-datetime.css";
 import { Settings as LuxonSettings } from 'luxon';
 import VueFroala from "vue-froala-wysiwyg";
+import "vue-slick-carousel/dist/vue-slick-carousel.css";
+// optional style for arrows & dots
+import "vue-slick-carousel/dist/vue-slick-carousel-theme.css";
 require("froala-editor/js/froala_editor.pkgd.min.js");
 require("froala-editor/css/froala_editor.pkgd.min.css");
 require("froala-editor/css/froala_style.min.css");
@@ -78,6 +81,7 @@ import {
     faExclamationCircle
 } from "@fortawesome/free-solid-svg-icons";
 import { faStar as faStarFar } from "@fortawesome/free-regular-svg-icons";
+import { faFacebookF } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 library.add(
     faUserSecret,
@@ -107,7 +111,8 @@ library.add(
     faList,
     faMedal,
     faFileDownload,
-    faExclamationCircle
+    faExclamationCircle,
+    faFacebookF
 );
 Vue.component("font-awesome-icon", FontAwesomeIcon);
 
@@ -122,7 +127,14 @@ Vue.use(VueFroala, {
         key: "UBB7jD6G4H5I3B2C10aIVLEABVAYFKc1Ce1MYGD1c1NYVMiB3B9B6A5C2C4D3H3G3H3==",
     },
 });
+import VueSlickCarousel from "vue-slick-carousel";
+const Slick = {
+  install(Vue, options) {
+    Vue.component("slick", VueSlickCarousel);
+  }
+};
 
+Vue.use(Slick);
 // moment.locale(VueCookies.isKey("back_office_language") ? VueCookies.get("back_office_language") : 'th');
 Vue.use(VueMoment, {
     moment,
@@ -165,8 +177,8 @@ Vue.prototype.$displayName = VueCookies.isKey("back_office_displayName") ?
     VueCookies.get("back_office_displayName") :
     "";
 Vue.prototype.$callApi = callApi;
-Vue.prototype.$baseUrl = "https://dev-admin-getfin-api.dosetech.co";
-//Vue.prototype.$baseUrl = "https://api-getfin-admin.dosetech.co";
+//Vue.prototype.$baseUrl = "https://dev-admin-getfin-api.dosetech.co";
+Vue.prototype.$baseUrl = "https://api-getfin-admin.dosetech.co";
 Vue.prototype.$formatDate = "DD MMM YYYY";
 Vue.prototype.$formatDateTime = "DD MMM YYYY (HH:mm)";
 Vue.prototype.$formatTime = "HH:mm";

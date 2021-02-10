@@ -4,7 +4,9 @@
       <b-container class="container-box">
         <b-row class="no-gutters">
           <b-col sm="6">
-            <h1 class="font-weight-bold header-main text-uppercase">
+            <h1
+              class="font-weight-bold header-main text-uppercase text-center text-sm-left"
+            >
               รายละเอียดการคืนสินค้า
             </h1>
           </b-col>
@@ -23,31 +25,46 @@
         <b-row class="no-gutters mt-2">
           <b-col>
             <div class="bg-white p-3 mb-3">
-              <p class="font-weight-bold text-center text-lg-left mb-2">
-                เลขที่การสั่งซื้อ :
-                <span class="font-weight-normal">
-                  <router-link :to="'/order/details/' + form.order.id">
-                    <span
-                      v-if="form.order.invoiceNo != ''"
-                      class="text-underline"
-                    >
-                      {{ form.order.invoiceNo }}
+              <div class="row">
+                <div class="col-sm-6">
+                  <p class="font-weight-bold text-center text-sm-left mb-2">
+                    เลขที่การสั่งซื้อ :
+                    <span class="font-weight-normal">
+                      <router-link :to="'/order/details/' + form.order.id">
+                        <span
+                          v-if="form.order.invoiceNo != ''"
+                          class="text-underline"
+                        >
+                          {{ form.order.invoiceNo }}
+                        </span>
+                        <span v-else class="text-underline">{{
+                          form.order.quotationNo
+                        }}</span>
+                      </router-link>
                     </span>
-                    <span v-else class="text-underline">{{
-                      form.order.quotationNo
-                    }}</span>
-                  </router-link>
-                </span>
-              </p>
+                  </p>
 
-              <p class="font-weight-bold text-center text-lg-left mb-2">
-                วันที่ / เวลา :
-                <span class="font-weight-normal">
-                  {{
-                    new Date(form.order.createdTime) | moment($formatDateTime)
-                  }}</span
-                >
-              </p>
+                  <p class="font-weight-bold text-center text-sm-left mb-2">
+                    วันที่ / เวลา :
+                    <span class="font-weight-normal">
+                      {{
+                        new Date(form.order.createdTime)
+                          | moment($formatDateTime)
+                      }}</span
+                    >
+                  </p>
+                </div>
+
+                <div class="col-sm-6 text-center text-sm-right">
+                  <span
+                    class="text-underline pointer"
+                    @click="$bvModal.show('showBookBankModal')"
+                    v-if="form.bookBankImageUrl != ''"
+                  >
+                    ดูรายละเอียดบัญชีธนาคาร</span
+                  >
+                </div>
+              </div>
             </div>
 
             <b-row>
@@ -95,6 +112,9 @@
 
                     <b-col class="my-2 mb-sm-0" md="12">
                       {{ form.order.shippingAddress.address }}
+                      {{ form.order.shippingAddress.building }}
+                      {{ form.order.shippingAddress.alley }}
+                      {{ form.order.shippingAddress.road }}
                       {{ form.order.shippingAddress.subDistrict }}
                       {{ form.order.shippingAddress.district }}
                       {{ form.order.shippingAddress.province }}
@@ -121,7 +141,12 @@
                     >
 
                     <b-col class="my-2 mb-sm-0" md="12"
-                      >{{ form.order.billingAddress.address }}
+                      >{{ form.order.billingAddress.address }} >{{
+                        form.order.billingAddress.building
+                      }}
+                      >{{ form.order.billingAddress.alley }} >{{
+                        form.order.billingAddress.road
+                      }}
                       {{ form.order.billingAddress.subDistrict }}
                       {{ form.order.billingAddress.district }}
                       {{ form.order.billingAddress.province }}
@@ -157,7 +182,7 @@
                       }"
                     ></div>
                   </div>
-                  <div class="col-5">
+                  <div class="col-3 m-auto">
                     <div class>
                       <p class="font-weight-bold mb-1">SKU: {{ item.sku }}</p>
                       <p class="m-0 two-lines">
@@ -167,13 +192,19 @@
                       <div class="d-flex">
                         <div
                           v-for="(item, index) in item.attribute"
+                          :key="index"
                           class="config-tag mr-1 mt-1"
                         >
                           {{ item.label }} : {{ item.option.label }}
                         </div>
                       </div>
+                      <div class="mt-2">
+                        ราคา: {{ item.grandTotal | numeral("0,0.00") }}
+                      </div>
+                      <div>ส่วนลด: {{ item.discount | numeral("0,0.00") }}</div>
                     </div>
                   </div>
+
                   <div class="col-3 text-center">
                     <p
                       class="text-success return-status"
@@ -198,10 +229,12 @@
                   <div class="col-1 text-center m-auto">
                     <b-button
                       v-if="form.orderItems.length > 1"
-                      class="btn btn-danger mr-md-2"
+                      variant="link"
+                      class="text-dark px-1 py-0"
                       @click="deleteReturn(item, index)"
-                      >ลบ</b-button
                     >
+                      ลบ
+                    </b-button>
                   </div>
                 </div>
                 <b-row class="p-3" v-if="form.orderItems.length != 0">
@@ -221,7 +254,7 @@
                       @click="showPreview(item.path)"
                       v-for="(item, index) in item.returnOrderProductImage"
                       :key="index"
-                      class="img-doc d-inline-block mr-2 return-pic pointer my-3"
+                      class="img-doc d-inline-block mr-2 return-pic pointer my-3 b-contain"
                     ></div>
 
                     <p class="mb-1">
@@ -229,6 +262,12 @@
                       <span v-if="item.returnReason != null">{{
                         item.returnReason
                       }}</span>
+                      <span v-else>-</span>
+                    </p>
+
+                    <p class="mb-1">
+                      {{ $t("note") }}:
+                      <span v-if="item.note != null">{{ item.note }}</span>
                       <span v-else>-</span>
                     </p>
                     <!-- <p class="mb-1">รายละเอียด: -</p> -->
@@ -254,41 +293,41 @@
                       }"
                       v-for="(item, index) in form.returnOrderDetailImage"
                       :key="index"
-                      class="img-doc d-inline-block mr-2 return-pic pointer my-3"
+                      class="img-doc d-inline-block mr-2 return-pic pointer my-3 b-contain"
                     ></div>
 
                     <p class="mb-1">
                       รูปแบบการส่ง:
-                      <span v-if="item.shippingType != null">{{
-                        item.shippingType
+                      <span v-if="form.shippingType != null">{{
+                        form.shippingType
                       }}</span>
                       <span v-else>-</span>
                     </p>
                     <p class="mb-1">
                       เลขพัสดุ:
-                      <span v-if="item.trackingNumber != null">{{
-                        item.trackingNumber
+                      <span v-if="form.trackingNumber != null">{{
+                        form.trackingNumber
                       }}</span>
                       <span v-else>-</span>
                     </p>
                     <p class="mb-1">
                       ชื่อธนาคาร:
-                      <span v-if="item.bankName != null">{{
-                        item.bankName
+                      <span v-if="form.bankName != null">{{
+                        form.bankName
                       }}</span>
                       <span v-else>-</span>
                     </p>
                     <p class="mb-1">
                       เลขที่บัญชี:
-                      <span v-if="item.bankAccountNo != null">{{
-                        item.bankAccountNo
+                      <span v-if="form.bankAccountNo != null">{{
+                        form.bankAccountNo
                       }}</span>
                       <span v-else>-</span>
                     </p>
                     <p class="mb-1">
                       ชื่อบัญชี:
-                      <span v-if="item.bankAccountName != null">{{
-                        item.bankAccountName
+                      <span v-if="form.bankAccountName != null">{{
+                        form.bankAccountName
                       }}</span>
                       <span v-else>-</span>
                     </p>
@@ -338,18 +377,19 @@
 
               <b-row class="no-gutters p-3">
                 <b-col md="4">
-                  <b-button
-                    href="/return"
-                    :disabled="isDisable"
-                    class="btn-details-set btn-secondary text-uppercase"
-                    >ย้อนกลับ</b-button
+                  <router-link to="/return">
+                    <b-button
+                      :disabled="isDisable"
+                      class="btn-details-set btn-cancel text-uppercase"
+                      >ย้อนกลับ</b-button
+                    ></router-link
                   >
                 </b-col>
                 <b-col md="8" class="text-sm-right">
                   <button
                     :disabled="isDisable"
                     type="button"
-                    class="btn btn-details-set btn-success ml-md-2 text-uppercase"
+                    class="btn btn-details-set btn-main ml-md-2 text-uppercase"
                     @click="updateReturnStatus()"
                   >
                     บันทึก
@@ -396,6 +436,42 @@
       </div>
     </b-modal>
 
+    <b-modal
+      id="showBookBankModal"
+      ref="showBookBankModal"
+      hide-header
+      hide-footer
+      centered
+      body-class="p-4"
+      size="md"
+    >
+      <div class="modal-header border-0 px-0 pt-0">
+        <!-- <h3 class="font-weight-bold">Image Preview</h3> -->
+        <button
+          type="button"
+          aria-label="Close"
+          class="close"
+          @click="$bvModal.hide('showBookBankModal')"
+        >
+          ×
+        </button>
+      </div>
+      <div>
+        <b-container class="p-0">
+          <b-row>
+            <b-col>
+              <div
+                class="preview-box b-contain m-auto border-0"
+                v-bind:style="{
+                  'background-image': 'url(' + form.bookBankImageUrl + ')',
+                }"
+              ></div>
+            </b-col>
+          </b-row>
+        </b-container>
+      </div>
+    </b-modal>
+
     <ModalAlert ref="modalAlert" :text="modalMessage" />
     <ModalAlertError ref="modalAlertError" :text="modalMessage" />
     <ModalLoading ref="modalLoading" :hasClose="false" />
@@ -415,7 +491,7 @@ export default {
     InputTextArea,
     ModalAlert,
     ModalAlertError,
-    ModalLoading
+    ModalLoading,
   },
   data() {
     return {
@@ -504,7 +580,6 @@ export default {
         item.push({
           productId: this.form.orderItems[i].productId,
           returnOrderId: this.form.orderItems[i].returnOrderId,
-          note: this.note,
           returnStatusId: this.form.returnStatusId,
         });
       }
@@ -515,6 +590,7 @@ export default {
         orderItems: item,
         deleteProduct: this.deleteId,
         orderStatusId: this.statusId,
+        note: this.note,
       };
 
       let resData = await this.$callApi(
@@ -529,6 +605,9 @@ export default {
       this.isDisable = false;
       if (resData.result == 1) {
         this.$refs.modalAlert.show();
+        setTimeout(() => {
+          this.$refs.modalAlert.hide();
+        }, 3000);
         this.note = "";
         this.getData();
       } else {
@@ -565,6 +644,7 @@ export default {
   color: white;
   border-radius: 15px;
   font-size: 12px;
+  white-space: nowrap;
 }
 
 .return-status {

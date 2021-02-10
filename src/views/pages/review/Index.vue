@@ -14,8 +14,8 @@
         </b-col>
       </CRow>
 
-      <b-row class="mt-3 mx-1 mx-sm-0">
-        <b-col class="label-text pt-2">
+      <b-row class="mx-1 mx-sm-0">
+        <b-col class="label-text pt-2 px-2">
           <b-form-checkbox
             size="lg"
             @change="onChangeShowSelected($event)"

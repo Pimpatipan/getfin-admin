@@ -2,11 +2,11 @@
   <div>
     <div class="min-vh-100">
       <CRow class="no-gutters px-3 px-sm-0">
-        <b-col sm="6" class="text-center text-sm-left mb-3 mb-sm-0">
-          <h1 class="mr-sm-4 header-main text-uppercase">รายการผู้ขาย</h1>
+        <b-col xl="4" class="text-center text-sm-left mb-3 mb-sm-0">
+          <h1 class="mr-sm-4 header-main text-uppercase">รายการพาร์ทเนอร์</h1>
         </b-col>
-        <b-col sm="6" class="text-right">
-          <div class="d-flex">
+        <b-col xl="8" class="text-right">
+          <div class="d-flex justify-content-end">
             <b-input-group class="panel-input-serach">
               <b-form-input
                 class="input-serach"
@@ -20,14 +20,22 @@
                 </span>
               </b-input-group-prepend>
             </b-input-group>
-            <b-form-select
-              v-model="selected"
-              :options="options"
-              @change="handleChangeStatus"
-            ></b-form-select>
           </div>
         </b-col>
       </CRow>
+      <b-row class="no-gutters px-3 px-sm-0 mt-2 overflow-auto">
+        <b-col class="">
+          <b-button-group class="btn-group-status">
+            <b-button
+              v-for="(item, index) in statusList"
+              :key="index"
+              @click="getDataByStatus(item.name, item.id)"
+              :class="{ menuactive: isActive(item.name) }"
+              >{{ item.name }} ({{ item.count }})</b-button
+            >
+          </b-button-group>
+        </b-col>
+      </b-row>
       <div class="mt-3 bg-white">
         <b-row class="no-gutters px-3 px-sm-0">
           <b-col>
@@ -75,11 +83,23 @@
                 <div v-if="data.item.seller.statusId == 0" class="text-dark">
                   ร่าง
                 </div>
-                <div v-else-if="data.item.seller.statusId == 1" class="text-warning">
-                  รอการอนุมัติ
+                <div
+                  v-else-if="data.item.seller.statusId == 1"
+                  class="text-warning"
+                >
+                  รอการตรวจสอบ
                 </div>
-                <div v-else-if="data.item.seller.statusId == 2" class="text-success">
-                  อนุมัติ
+                <div
+                  v-else-if="data.item.seller.statusId == 2"
+                  class="text-success"
+                >
+                  ตรวจสอบแล้ว
+                </div>
+                <div v-else class="text-danger">ไม่อนุมัติ</div>
+              </template>
+              <template v-slot:cell(seller.enabled)="data">
+                <div v-if="data.item.seller.enabled" class="text-success">
+                  ใช้งานได้
                 </div>
                 <div v-else class="text-danger">ถูกระงับ</div>
               </template>
@@ -187,6 +207,11 @@ export default {
           label: "สถานะ",
           class: "w-100px text-nowrap",
         },
+        {
+          key: "seller.enabled",
+          label: "สถานะบัญชี",
+          class: "w-100px text-nowrap",
+        },
         { key: "userGUID", label: "", class: "w-100px text-nowrap" },
       ],
       items: [],
@@ -205,21 +230,28 @@ export default {
         { value: 100, text: "100 / หน้า" },
       ],
       totalRowMessage: "",
-      options: [
-        { value: null, text: "สถานะ" },
-        { value: 0, text: "ร่าง" },
-        { value: 1, text: "รอการอนุมัติ" },
-        { value: 2, text: "อนุมัติ" },
-        { value: 3, text: "ถูกระงับ" },
-      ],
     };
   },
   created: async function () {
     await this.getList();
+    this.activeItem = "ทั้งหมด";
   },
   methods: {
     getList: async function () {
       this.isBusy = true;
+
+      let status = await this.$callApi(
+        "get",
+        `${this.$baseUrl}/api/Seller/StatusWithCount`,
+        null,
+        this.$headers,
+        null
+      );
+
+      if (status.result == 1) {
+        this.statusList = status.detail;
+      }
+
       let resData = await this.$callApi(
         "post",
         `${this.$baseUrl}/api/Seller/List`,
@@ -235,8 +267,12 @@ export default {
         this.$isLoading = true;
       }
     },
-    getDataByStatus(status) {
-      this.filter.OverView = status;
+    getDataByStatus(status, id) {
+      this.filter.status = [];
+      if (status != "ทั้งหมด") {
+        this.filter.status.push(id);
+      }
+
       this.activeItem = status;
       this.getList();
     },
@@ -267,13 +303,6 @@ export default {
       this.filter.statusId = value;
       this.getList();
     },
-    handleChangeStatus(value) {
-      this.filter.status = [];
-      if (value != null) {
-        this.filter.status.push(value);
-      }
-      this.getList();
-    },
   },
 };
 </script>
@@ -281,5 +310,15 @@ export default {
 <style scoped>
 .menuactive {
   color: #ffb300 !important;
+}
+
+.w-200px {
+  width: 200px;
+}
+
+@media (max-width: 1200px) {
+  .w-200px {
+    width: 50%;
+  }
 }
 </style>

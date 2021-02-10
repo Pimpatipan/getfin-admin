@@ -2,11 +2,11 @@
   <div>
     <div class="min-vh-100">
       <CRow class="no-gutters px-3 px-sm-0">
-        <b-col sm="4" class="text-center text-sm-left mb-3 mb-sm-0">
+        <b-col xl="4" class="text-center text-sm-left mb-3 mb-sm-0">
           <h1 class="mr-sm-4 header-main text-uppercase">รายการแคมเปญ</h1>
         </b-col>
-        <b-col sm="8" class="text-right">
-          <div class="d-flex">
+        <b-col xl="8" class="text-right">
+          <div class="d-flex justify-content-end">
             <b-input-group class="panel-input-serach">
               <b-form-input
                 class="input-serach"
@@ -27,9 +27,7 @@
                 class="text-white mr-0 mr-sm-1"
               />
               <span class="d-none d-sm-inline"
-                >ค้นหาแบบละเอียด ({{
-                  countStatus + countStartdate + countEnddate
-                }})</span
+                >ค้นหาแบบละเอียด ({{ countStartdate + countEnddate }})</span
               >
             </b-button>
             <router-link to="/campaign/details/0">
@@ -75,13 +73,6 @@
             format="dd MMM yyyy"
           ></datetime>
 
-          <label class="label-text mt-1">สถานะ</label>
-          <b-form-select
-            v-model="selected"
-            :options="options"
-            @change="handleChangeStatus"
-          ></b-form-select>
-
           <div class="text-center">
             <p class="text-danger" v-if="errorDate">
               วันสิ้นสุดต้องมากกว่าวันเริ่มต้น
@@ -92,13 +83,27 @@
             <button
               type="button"
               class="btn btn-purple button"
-              @click="getDataByStatus"
+              @click="getDataByFilter"
             >
               ค้นหา
             </button>
           </div>
         </div>
       </b-sidebar>
+
+      <b-row class="no-gutters px-3 px-sm-0 mt-2 overflow-auto">
+        <b-col class="">
+          <b-button-group class="btn-group-status">
+            <b-button
+              v-for="(item, index) in statusList"
+              :key="index"
+              @click="getDataByStatus(item.name, item.id)"
+              :class="{ menuactive: isActive(item.name) }"
+              >{{ item.name }} ({{ item.count }})</b-button
+            >
+          </b-button-group>
+        </b-col>
+      </b-row>
 
       <div class="mt-3 bg-white">
         <b-row class="no-gutters px-3 px-sm-0">
@@ -131,13 +136,13 @@
                 <div v-if="data.item.statusId == 0" class="text-dark">
                   รอดำเนินการ
                 </div>
-                <div v-else-if="data.item.statusId == 1" class="text-warning">
+                <div v-else-if="data.item.statusId == 1" class="text-info">
                   เปิดรับสมัคร
                 </div>
                 <div v-else-if="data.item.statusId == 2" class="text-warning">
                   ดำเนินอยู่
                 </div>
-                <div v-else class="text-danger">ถูกระงับ</div>
+                <div v-else class="text-success">เสร็จสิ้น</div>
               </template>
               <template v-slot:cell(updatedTime)="data">
                 <span>{{
@@ -223,11 +228,10 @@ export default {
     return {
       selected: null,
       options: [
-        { value: null, text: "สถานะ" },
-        { value: 0, text: "รอดำเนินการ" },
-        { value: 1, text: "เปิดรับสมัคร" },
-        { value: 2, text: "ดำเนินอยู่" },
-        { value: 3, text: "เสร็จสิ้น" },
+        { id: null, name: "ทั้งหมด" },
+        { id: 1, name: "เปิดรับสมัคร" },
+        { id: 2, name: "ดำเนินอยู่" },
+        { id: 3, name: "เสร็จสิ้น" },
       ],
       statusList: [],
       modalMessage: "",
@@ -300,12 +304,6 @@ export default {
     };
   },
   computed: {
-    countStatus: function () {
-      var count = 0;
-      if (this.filter.Status.length != 0) count += 1;
-      else if (count > 0) count -= 1;
-      return count;
-    },
     countStartdate: function () {
       var count = 0;
       if (this.filter.StartDate != "") count += 1;
@@ -323,10 +321,23 @@ export default {
   created: async function () {
     await this.getList();
     this.$isLoading = true;
+    this.activeItem = "ทั้งหมด";
   },
   methods: {
     getList: async function () {
       this.isBusy = true;
+
+      let status = await this.$callApi(
+        "get",
+        `${this.$baseUrl}/api/Campaign/StatusWithCount`,
+        null,
+        this.$headers,
+        null
+      );
+
+      if (status.result == 1) {
+        this.statusList = status.detail;
+      }
 
       let resData = await this.$callApi(
         "post",
@@ -343,13 +354,7 @@ export default {
         this.isBusy = false;
       }
     },
-    handleChangeStatus(value) {
-      this.filter.Status = [];
-      if (value != null) {
-        this.filter.Status.push(value);
-      }
-    },
-    getDataByStatus(status) {
+    getDataByFilter(status) {
       if (this.filter.StartDate > this.filter.EndDate) {
         this.errorDate = true;
         return;
@@ -405,6 +410,15 @@ export default {
         this.selectAllCb = false;
       }
     },
+    getDataByStatus(status, id) {
+      this.activeItem = status;
+      this.filter.Status = [];
+      if (id != -1) this.filter.Status.push(id);
+      this.getList();
+    },
+    isActive: function (menuItem) {
+      return this.activeItem == menuItem;
+    },
     openModalDelete(value) {
       this.campaignId = value.id;
       this.modalMessage = "คุณต้องการลบ " + value.campaignName + " ใช่หรือไม่?";
@@ -423,6 +437,9 @@ export default {
       if (resData.result == 1) {
         this.$refs.modalAlert.show();
         this.filter.PageNo = 1;
+        setTimeout(() => {
+          this.$refs.modalAlert.hide();
+        }, 3000);
         await this.getList();
       } else {
         this.$refs.modalAlertError.show();

@@ -8,11 +8,11 @@
           </h1>
         </b-col>
         <b-col sm="6" class="text-right">
-          <div class="d-flex">
+          <div class="d-flex justify-content-end">
             <b-input-group class="panel-input-serach">
               <b-form-input
                 class="input-serach"
-                placeholder="ชื่อร้านค้า"
+                placeholder="ชื่อสินค้า"
                 v-model="filter.Search"
                 @keyup="handleSearch"
               ></b-form-input>
@@ -43,27 +43,44 @@
               <template v-slot:cell(product.imageUrl)="data">
                 <div class="position-relative">
                   <div
-                    class="square-box b-contain"
+                    class="image"
                     v-bind:style="{
                       'background-image':
-                        'url(' + data.item.product.imageUrl + ')'
+                        'url(' + data.item.product.imageUrl + ')',
                     }"
                   ></div>
                 </div>
               </template>
               <template v-slot:cell(categories)="data">
-                <span v-if="data.item.categories != null" class="">
+                <span
+                  v-if="
+                    data.item.categories != null &&
+                    data.item.categories.length > 0
+                  "
+                  class=""
+                >
                   {{ addSign(data.item.categories) }}</span
                 >
-              </template>
-              <template v-slot:cell(product.rawPrice)="data">
-                <p class="m-0">
-                  ฿ {{ data.item.product.price | numeral("0,0.00") }}
-                </p>
+                <span v-else>-</span>
               </template>
               <template v-slot:cell(product.straightPrice)="data">
                 <p class="m-0">
                   ฿ {{ data.item.product.straightPrice | numeral("0,0.00") }}
+                </p>
+              </template>
+              <template v-slot:cell(priceAfterDiscount)="data">
+                <p class="m-0">
+                  ฿ {{ data.item.priceAfterDiscount | numeral("0,0.00") }}
+                </p>
+              </template>
+              <template v-slot:cell(product.quantity)="data">
+                <p class="m-0">
+                  {{ data.item.product.quantity | numeral("0,0") }}
+                </p>
+              </template>
+              <template v-slot:cell(quantity)="data">
+                <p class="m-0">
+                  {{ data.item.quantity | numeral("0,0") }}
                 </p>
               </template>
               <template v-slot:cell(product.id)="data">
@@ -89,12 +106,11 @@
 
         <b-row class="mt-3 p-3">
           <b-col md="6">
-            <b-button
-              :href="'/campaign/verify/partnerlist/' + campid"
-              :disabled="isDisable"
-              class="btn-details-set btn-cancel"
-              >ย้อนกลับ</b-button
-            >
+            <router-link :to="'/campaign/verify/partnerlist/' + campid">
+              <b-button :disabled="isDisable" class="btn-details-set btn-cancel"
+                >ย้อนกลับ</b-button
+              >
+            </router-link>
           </b-col>
           <b-col md="6" class="text-sm-right">
             <button
@@ -119,18 +135,21 @@
     </div>
     <ModalAlert ref="modalAlert" :text="modalMessage" />
     <ModalAlertError ref="modalAlertError" :text="modalMessage" />
+ <ModalLoading ref="modalLoading" :hasClose="false" />
   </div>
 </template>
 
 <script>
 import ModalAlert from "@/components/modal/alert/ModalAlert";
 import ModalAlertError from "@/components/modal/alert/ModalAlertError";
+import ModalLoading from "@/components/modal/alert/ModalLoading";
 
 export default {
   name: "CampaignProductList",
   components: {
     ModalAlert,
-    ModalAlertError
+    ModalAlertError,
+    ModalLoading
   },
   data() {
     return {
@@ -141,48 +160,48 @@ export default {
         {
           key: "product.imageUrl",
           label: "รูปภาพ",
-          class: "w-100px"
+          class: "w-200",
         },
         {
           key: "product.name",
           label: "ชื่อสินค้า",
-          class: "w-100px"
+          class: "w-100px",
         },
         {
           key: "product.sku",
           label: "SKU",
-          class: "w-100px"
+          class: "w-100px",
         },
         {
           key: "categories",
           label: "หมวดหมู่",
-          class: "w-200"
-        },
-        {
-          key: "product.rawPrice",
-          label: "ราคาเดิม",
-          class: "w-100px"
+          class: "w-200",
         },
         {
           key: "product.straightPrice",
-          label: "ราคาแคมเปญ",
-          class: "w-100px"
+          label: "ราคาเดิม",
+          class: "w-100px",
         },
         {
           key: "priceAfterDiscount",
-          label: "จำนวนสินค้า",
-          class: "w-100px"
+          label: "ราคาแคมเปญ",
+          class: "w-100px",
         },
         {
           key: "product.quantity",
-          label: "จำนวนสินค้าที่ต้องซื้อ",
-          class: "w-100px"
+          label: "จำนวนสินค้า",
+          class: "w-100px",
+        },
+        {
+          key: "quantity",
+          label: "จำนวนสินค้าที่ต้องการขาย",
+          class: "w-100px",
         },
         {
           key: "product.id",
           label: "",
-          class: "w-100px"
-        }
+          class: "w-100px",
+        },
       ],
       items: [],
       isBusy: false,
@@ -194,23 +213,23 @@ export default {
         StartDate: null,
         EndDate: null,
         Status: [],
-        Search: ""
+        Search: "",
       },
       pageOptions: [
         { value: 10, text: "10 / หน้า" },
         { value: 30, text: "30 / หน้า" },
         { value: 50, text: "50 / หน้า" },
-        { value: 100, text: "100 / หน้า" }
+        { value: 100, text: "100 / หน้า" },
       ],
       totalRowMessage: "",
       campaignName: "",
       items: [],
       deleteProductList: [],
       isBusy: false,
-      isDisable: false
+      isDisable: false,
     };
   },
-  created: async function() {
+  created: async function () {
     await this.getList();
     this.$isLoading = true;
   },
@@ -225,7 +244,7 @@ export default {
       str = str.replace(/>\s*$/, "");
       return str;
     },
-    getList: async function() {
+    getList: async function () {
       this.isBusy = true;
 
       let filter = {
@@ -234,7 +253,7 @@ export default {
         StartDate: null,
         EndDate: null,
         Status: [],
-        Search: ""
+        Search: "",
       };
 
       let resData = await this.$callApi(
@@ -247,7 +266,7 @@ export default {
 
       if (resData.result == 1) {
         this.items = resData.detail.dataList;
-        var data = this.items.filter(x => x.id == this.campid);
+        var data = this.items.filter((x) => x.id == this.campid);
         this.campaignName = data[0].campaignName;
       }
 
@@ -281,12 +300,13 @@ export default {
       this.deleteProductList.push(id);
       this.items.splice(index, 1);
     },
-    approveProduct: async function(flag) {
+    approveProduct: async function (flag) {
       this.isDisable = true;
+      this.$refs.modalLoading.show();
 
       let request = {
         IsDeleteProductId: this.deleteProductList,
-        Result: true
+        Result: true,
       };
 
       let resData = await this.$callApi(
@@ -300,6 +320,7 @@ export default {
         request
       );
       this.modalMessage = resData.message;
+      this.$refs.modalLoading.hide();
       if (resData.result == 1) {
         this.$refs.modalAlert.show();
         this.isDisable = false;
@@ -308,27 +329,39 @@ export default {
             `/campaign/verify/partnerlist/${this.$route.params.campid}`
           );
         } else {
+          setTimeout(() => {
+            this.$refs.modalAlert.hide();
+          }, 3000);
+          
           this.filter = {
             PageNo: 1,
             PerPage: 10,
             StartDate: null,
             EndDate: null,
             Status: [],
-            Search: ""
+            Search: "",
           };
           this.getList();
         }
       } else {
         this.$refs.modalAlertError.show();
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style scoped>
 .menuactive {
   color: #ffb300 !important;
+}
+
+.image {
+  width: 100%;
+  padding-top: 42.9%;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
 .review-shortdesc {

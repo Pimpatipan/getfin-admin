@@ -17,8 +17,8 @@
       :textField="textField"
     ></b-form-select>
     <div v-if="v && v.$error">
-      <span class="text-error" v-if="v.required == false">{{options[0].text}}</span>
-      <span class="text-error" v-else-if="v.minValue == false">{{options[0].text}}</span>
+      <span class="text-error" v-if="v.required == false">{{options[0][textField || "text"]}}</span>
+      <span class="text-error" v-else-if="v.minValue == false">{{options[0][textField || "text"]}}</span>
     </div>
   </div>
 </template>

@@ -6,7 +6,7 @@
           <h1 class="mr-sm-4 header-main text-uppercase">รายการคืนสินค้า</h1>
         </b-col>
         <b-col xl="6" class="text-right">
-          <div class="d-flex">
+          <div class="d-flex justify-content-end">
             <b-input-group class="panel-input-serach">
               <b-form-input
                 class="input-serach"
@@ -29,7 +29,9 @@
                 title="filter-btn"
                 class="text-white mr-0 mr-sm-1"
               />
-              <span class="d-none d-sm-inline one-line">ค้นหาแบบละเอียด ({{ countStartdate + countEnddate }})</span>
+              <span class="d-none d-sm-inline one-line"
+                >ค้นหาแบบละเอียด ({{ countStartdate + countEnddate }})</span
+              >
             </b-button>
           </div>
         </b-col>
@@ -160,6 +162,12 @@
               </template>
               <template v-slot:cell(orderStatus)="data">
                 <div v-if="data.item.returnStatusId == 4" class="text-success">
+                  {{ data.item.orderStatus }}
+                </div>
+                <div
+                  v-else-if="data.item.returnStatusId == 2"
+                  class="text-info"
+                >
                   {{ data.item.orderStatus }}
                 </div>
                 <div v-else class="text-warning">

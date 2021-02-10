@@ -7,7 +7,8 @@ const state = {
     sidebarMinimize: false,
     asideShow: false,
     darkMode: false,
-    globalLanguages: []
+    globalLanguages: [],
+    email:""
 }
 
 const mutations = {
@@ -30,7 +31,10 @@ const mutations = {
         list.forEach(item => {
             state.globalLanguages.push({...item});
         });
-    }
+    },
+    setEmail(state, val) {
+        state.email = val
+    },
 }
 
 export default new Vuex.Store({

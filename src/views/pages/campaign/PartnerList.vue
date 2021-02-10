@@ -8,7 +8,7 @@
           </h1>
         </b-col>
         <b-col sm="8" class="text-right">
-          <div class="d-flex">
+          <div class="d-flex justify-content-end">
             <b-input-group class="panel-input-serach">
               <b-form-input
                 class="input-serach"

@@ -98,13 +98,10 @@
             ></b-col>
           </b-row>
           <b-row>
-            <b-col cols="6">
+            <b-col cols="12">
               <label class="font-weight-bold"
                 >กรุณาบอกเหตุผลในการปฏิเสธข้อมูล</label
               >
-            </b-col>
-            <b-col cols="6" class="text-right">
-              <label class="font-weight-bold">{{ new Date(dataLog.updatedTime) | moment($formatDate) }}</label>
             </b-col>
             <div class="px-3">
               <p>{{ dataLog.warningLog.note }}</p>
@@ -285,6 +282,9 @@ export default {
       this.isDisable = false;
       if (data.result == 1) {
         this.$refs.modalAlert.show();
+        setTimeout(() => {
+            this.$refs.modalAlert.hide();
+          }, 3000);
       } else {
         this.$refs.modalAlertError.show();
       }
